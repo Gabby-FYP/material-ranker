@@ -1,0 +1,62 @@
+{% extends "site/pages/auth/base.html" %}
+
+{% block head_I %}
+    <style>
+        .auth-container > .btn-primary {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+        }
+        .auth-container > .btn-primary:hover {
+            background-color: #5a54d9;
+            border-color: #5a54d9;
+        }
+        .auth-container > .btn-outline-secondary {
+            color: #6c63ff;
+            border-color: #6c63ff;
+        }
+        .auth-container > .btn-outline-secondary:hover {
+            background-color: #e9e7ff;
+            border-color: #5a54d9;
+            color: #5a54d9;
+        }
+        .auth-container > a {
+            color: #6c63ff;
+            text-decoration: none;
+        }
+        .auth-container > a:hover {
+            text-decoration: underline;
+        }
+        .form-text p a {
+            color: #6c63ff;
+            text-decoration: none;
+        }
+        .form-text p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock head_I %}
+
+
+{% block auth_content %} 
+    <div>
+        <h3>Welcome Back</h3>
+        <form class="my-2">
+            <p class="text-muted mb-0">Select Role</p>
+            <div class="btn-group role-select mb-3" role="group" aria-label="Role Selection">
+                <button type="button" class="btn btn-primary"> <i class="fas fa-user-graduate"></i> Student</button>
+                <button type="button" class="btn btn-outline-secondary">Admin</button>
+            </div>
+            <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="mb-3 position-relative">
+                <input type="password" class="form-control" placeholder="Password" required>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <a href="/reset-password/" class="text-decoration-none">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+        <p class="form-text mt-3">Don't have an account? <a href="/signup/" class="text-decoration-none">Sign Up</a></p>
+    </div>
+{% endblock auth_content %}

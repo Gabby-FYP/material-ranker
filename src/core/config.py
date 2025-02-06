@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     SENTRY_DSN: HttpUrl | None = None
     SQLITE_DATABASE_PATH: str
     TEST_DATABASE_PATH: str
+    SESSION_COOKIE_TTL: int = 7 * 24 * 60 * 60 # 7 days
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
