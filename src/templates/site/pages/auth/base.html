@@ -1,0 +1,37 @@
+{% extends "site/pages/base.html" %}
+
+{% block head %}
+<style>
+    body {
+        height: 100vh;
+        background-color: #f8f9fa;
+    }
+    .auth-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 30rem;
+    }
+    .logo-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+</style>
+
+{% block head_I %} {% endblock head_I %}
+
+{% endblock head %}
+
+
+{% block body_I %}
+    <div class="d-flex h-100 w-100 justify-content-center align-items-center">
+        <div class="auth-container mb-5">
+            <img src="/static/imgs/logo.png" class="logo-img mb-3" alt="UI Logo">
+            {% block auth_content %} {% endblock auth_content %}
+        </div>
+    </div>
+{% endblock body_I %}
