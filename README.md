@@ -27,7 +27,7 @@ To set up the Material Ranker project using Docker, follow these steps:
    Build the Docker image using the provided `Dockerfile`:
 
    ```bash
-   docker build -t material-ranker .
+   docker compose build
    ```
 
 3. **Run the Docker Container**
@@ -35,17 +35,17 @@ To set up the Material Ranker project using Docker, follow these steps:
    Run the Docker container using the built image:
 
    ```bash
-   docker run -d -p 8000:8000 material-ranker
+   docker compose up
    ```
 
    This command will start the application and map port 8000 of the container to port 8000 on your host machine.
 
 4. **Access the Application**
 
-   Once the container is running, you can access the API documentation at:
+   Once the container is running, you can access the web interface:
 
    ```
-   http://localhost:8000/docs
+   http://localhost:8000/
    ```
 
    This will open the OpenAPI documentation where you can interact with the API.
