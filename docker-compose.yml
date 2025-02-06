@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  material-ranker:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: unless-stopped
+    build:
+      context: .
+    depends_on:
+      redis:
+        condition: service_healthy
+      material-ranker-prestart:
+        condition: service_completed_successfully
+    volumes:
+      - ./src:/material_ranker/src
+      - ./database:/material_ranker/database
+      - ./logs:/material_ranker/logs
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    environment: &common_env
+      SQLITE_DATABASE_PATH: ${SQLITE_DATABASE_PATH}
+      TEMPLATE_DIR: ${TEMPLATE_DIR}
+      STATIC_DIR: ${STATIC_DIR}
+      DOMAIN: ${DOMAIN}
+      ENVIRONMENT: ${ENVIRONMENT}
+      SECRET_KEY: ${SECRET_KEY?Variable not set}
+      FIRST_SUPERUSER: ${FIRST_SUPERUSER?Variable not set}
+      FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD?Variable not set}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      EMAILS_FROM_EMAIL: ${EMAILS_FROM_EMAIL}
+      SENTRY_DSN: ${SENTRY_DSN}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  material-ranker-prestart:
+    build:
+      context: .
+    command: bash ./scripts/prestart.sh
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./database:/material_ranker/database
+      - ./logs:/material_ranker/logs
+    env_file:
+      - .env
+    environment: *common_env
+
+  material-ranker-worker:
+    restart: unless-stopped
+    build:
+      context: .
+    command: celery -A src.worker.celery_app worker
+    depends_on:
+      redis:
+        condition: service_healthy
+      material-ranker:
+        condition: service_started
+    volumes:
+      - ./src:/material_ranker/src
+      - ./database:/material_ranker/database
+      - ./logs:/material_ranker/logs
+    env_file:
+      - .env
+    environment: *common_env

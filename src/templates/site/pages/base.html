@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img 
+                src="./static/imgs/logo.png" 
+                alt="UI Logo" 
+                width="50" 
+                height="50"
+            >
+        </a>      
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarContent"
+          aria-controls="navbarContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-3">
+            <li class="nav-item">
+              <a id="home-nav" class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <button
+                    class="btn btn-sm btn-primary rounded nav-link" 
+                    type="button">Sign up
+                </button>
+            </li>
+            <li class="nav-item">
+                <button 
+                    class="btn btn-sm btn-outline-primary rounded nav-link" 
+                    type="button">Login
+                </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% block body_I %} {% endblock body_I %}
+
+    <!-- Footer -->
+    <footer class="navbar fixed-bottom bg-dark text-white p-3">
+      <div class="container text-center w-100">
+        <p class="w-100 mb-0 text-center">
+          &copy; {{timestamp}} Your Company. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+{% endblock body %}
