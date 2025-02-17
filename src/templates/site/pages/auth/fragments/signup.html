@@ -1,0 +1,123 @@
+<div id="auth-swap-container">
+    <h1>Create Account</h1>
+    <form
+        hx-post="/signup/"
+        hx-trigger="submit"
+        hx-target-400="#form-error"
+    >
+        <div id="form-error"></div>
+        <div class="mb-3">
+            <label for="fullName" class="form-label visually-hidden">Full Name</label>
+            <input type="text" name="fullname" class="form-control" id="fullName" placeholder="Full Name" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label visually-hidden">Email Address</label>
+            <input type="email" name="email" class="form-control" id="email" placeholder="Email Address" required>
+        </div>
+        <div class="mb-3">
+            <label for="matricNumber" class="form-label visually-hidden">Matric Number</label>
+            <input type="number" name="matric_number" class="form-control" id="matricNumber" placeholder="Matric Number" required pattern="\d{6,7}" maxlength="7">
+        </div>
+        <div class="mb-3 position-relative input-group" hx-ext="response-targets">
+            <label for="password" class="form-label visually-hidden">Password</label>
+            <input 
+                hx-patch="/signup/validate/"
+                hx-trigger="change"
+                hx-target="#password-validation-error"
+                hx-target-422="#password-validation-error"
+                hx-swap="innerHTML"
+                hx-params="password"
+                hx-sync="closest form:abort"
+                type="password"
+                name="password" 
+                class="form-control" 
+                id="password" 
+                placeholder="Password" 
+                required
+                aria-describedby="password_preview"
+            >
+            <span 
+                class="input-group-text" 
+                id="password_preview"
+                onclick="togglePassword('password', this)"
+            >👁</span>            
+            <div class="text-danger text-start fw-lighter" id="password-validation-error"></div>
+        </div>
+        <div class="mb-3 position-relative input-group">
+            <label for="confirmPassword" class="form-label visually-hidden">Confirm Password</label>
+            <input 
+                type="password" 
+                name="confirm_password"
+                onchange="checkPasswordEvent()" 
+                class="form-control" 
+                id="confirmPassword" 
+                placeholder="Confirm Password" 
+                aria-labelledby="confirm_password_preview"
+                required
+                hx-on:htmx:before-request="return validatePasswords(event)"
+            >
+            <span 
+                onclick="togglePassword('confirmPassword', this)"
+                class="input-group-text" 
+                id="confirm_password_preview"
+            >👁</span>
+            <div class="text-danger text-start fw-lighter col-12" id="password-match-error"></div>
+        </div>
+        <button 
+            type="submit"
+            class="btn btn-primary w-100 mt-3"
+        >
+            Register
+            <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+    </form>
+    <p class="form-text mt-3">
+        Already have an account? 
+        <a
+            href="/login/"
+            hx-get="/login/"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#auth-swap-container"
+        >Sign In</a>
+    </p>
+</div>
+
+<script>
+
+function togglePassword(inputId, button) {
+    let input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        button.innerText = "🙈";
+    } else {
+        input.type = "password";
+        button.innerText = "👁";
+    }
+}
+
+// Validate password on form submission and highlight error if passwords do not match
+function checkPassword() {
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("confirmPassword").value;
+    return password === confirmPassword;
+}
+
+function checkPasswordEvent() {
+    let errorDiv = document.getElementById("password-match-error");
+
+    if (!checkPassword()) {
+        errorDiv.textContent = "Passwords do not match.";
+        return false
+    } else {
+        errorDiv.textContent = "";
+        return true
+    }
+}
+
+function validatePasswords(event) {
+    if (!checkPasswordEvent()) {
+        event.preventDefault(); // Prevent form submission
+    }
+}
+</script>

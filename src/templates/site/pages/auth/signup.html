@@ -29,36 +29,5 @@
 {% endblock head_I %}
 
 {% block auth_content %} 
-<div>
-    <h1>Create Account</h1>
-    <form>
-        <div class="mb-3">
-            <label for="fullName" class="form-label visually-hidden">Full Name</label>
-            <input type="text" class="form-control" id="fullName" placeholder="Full Name" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label visually-hidden">Email Address</label>
-            <input type="email" class="form-control" id="email" placeholder="Email Address" required>
-        </div>
-        <div class="mb-3">
-            <label for="matricNumber" class="form-label visually-hidden">Matric Number</label>
-            <input type="text" class="form-control" id="matricNumber" placeholder="Matric Number" required pattern="\d{6,7}" maxlength="7">
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label visually-hidden">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" required>
-        </div>
-        <div class="mb-3">
-            <label for="confirmPassword" class="form-label visually-hidden">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
-        </div>
-        <div class="password-strength bg-light p-3">
-            <label for="passwordStrength" class="form-label">Password Strength</label>
-            <input type="range" class="form-range" id="passwordStrength" disabled>
-            <small class="text-success">Strong - Use 8+ characters with letters, numbers & symbols</small>
-        </div>
-        <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
-    </form>
-    <p class="form-text mt-3">Already have an account? <a href="/login/">Sign In</a></p>
-</div>
+{% include 'site/pages/auth/fragments/signup.html' %}
 {% endblock auth_content %}
