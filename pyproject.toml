@@ -28,4 +28,6 @@ dependencies = [
     "redis>=5.2.1",
     "celery-types>=0.22.0",
     "fastapi-sessions>=0.3.2",
+    "cryptography>=44.0.1",
+    "ipython>=8.32.0",
 ]

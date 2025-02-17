@@ -50,10 +50,13 @@
 </head>
 <body>
     <div class="verification-container">
-        <img src="../../../../static/imgs/email_images.png" alt="Email Verification Image">
+        <img src="{{ SERVER_HOST }}/static/imgs/verify_images.png" alt="Email Verification Image">
         <h1>Verify Your Email</h1>
-        <p>We’ve sent a verification link to your email. Please check your inbox and click the link to verify your account.</p>
-        <a href="/" class="btn btn-primary w-100 mt-3">Go to Homepage</a>
+        <p>Thank you for signing up! Please verify your email address to activate your account.</p>
+        <a href="{{ SERVER_HOST }}{{ verification_link }}" class="btn btn-primary w-100 mt-3">Verify My Email</a>
+        <p class="form-text mt-3">If the button above does not work, you can also verify your email by clicking the link below:</p>
+        <p class="form-text"><a href="{{ SERVER_HOST }}{{ verification_link }}">{{ verification_link }}</a></p>
+        <p class="form-text mt-3">If you did not sign up for an account, please ignore this email.</p>
     </div>
 
     <!-- Bootstrap JS -->

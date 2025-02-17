@@ -1,0 +1,14 @@
+{% extends "site/pages/auth/base.html" %}
+
+{% block nav_bar %} {% endblock nav_bar %}
+
+{% block body_I %}
+<div class="d-flex h-100 w-100 justify-content-center align-items-center">
+    <div class="verification-container">
+        <img src="/static/imgs/email_images.png" alt="Email Verification Image">
+        <h1>Verify Your Email</h1>
+        <p>We’ve sent a verification link to your email. Please check your inbox and click the link to verify your account.</p>
+        <a href="/" class="btn btn-primary w-100 mt-3">Go to Homepage</a>
+    </div>
+</div>
+{% endblock body_I %}
