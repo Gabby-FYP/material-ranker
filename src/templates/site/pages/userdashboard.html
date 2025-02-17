@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #fff;
+            padding: 20px;
+            height: 100vh;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h2 {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: #fff;
+            padding: 20px;
+            height: 100vh;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 270px; /* Prevents content from overlapping with the sidebar */
+        }
+
+
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #6c63ff;
+            color: #fff;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .search-bar {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        .course-section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .course-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .course-card {
+            width: 250px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            text-align: center;
+        }
+        .course-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .rating {
+            color: #ffc107;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Welcome back, Oluwatobi!</h2>
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Recommendation history</a>
+        <a href="#">Make a recommendation</a>
+
+        <a href="#">Profile</a>
+        <a href="#">Logout</a>
+    </div>
+    <div class="content">
+        <input type="text" class="search-bar" placeholder="Search course materials...">
+        
+        <div class="course-section">
+            <h3>100 Level Materials</h3>
+            <div class="course-container">
+                <div class="course-card">
+                    <img src="course1.jpg" alt="Course Image">
+                    <h5>Course Title 1</h5>
+                    <p>Rated by 120 people</p>
+                    <p class="rating">⭐⭐⭐⭐☆ (4.2)</p>
+                </div>
+                <div class="course-card">
+                    <img src="course2.jpg" alt="Course Image">
+                    <h5>Course Title 2</h5>
+                    <p>Rated by 95 people</p>
+                    <p class="rating">⭐⭐⭐☆☆ (3.5)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="course-section">
+            <h3>200 Level Materials</h3>
+            <div class="course-container">
+                <div class="course-card">
+                    <img src="course3.jpg" alt="Course Image">
+                    <h5>Course Title 3</h5>
+                    <p>Rated by 200 people</p>
+                    <p class="rating">⭐⭐⭐⭐⭐ (4.8)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="course-section">
+            <h3>300 Level Materials</h3>
+            <div class="course-container">
+                <div class="course-card">
+                    <img src="course4.jpg" alt="Course Image">
+                    <h5>Course Title 4</h5>
+                    <p>Rated by 75 people</p>
+                    <p class="rating">⭐⭐⭐⭐☆ (4.1)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="course-section">
+            <h3>400 Level Materials</h3>
+            <div class="course-container">
+                <div class="course-card">
+                    <img src="course5.jpg" alt="Course Image">
+                    <h5>Course Title 5</h5>
+                    <p>Rated by 50 people</p>
+                    <p class="rating">⭐⭐⭐☆☆ (3.2)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="course-section">
+            <h3>500 Level Materials</h3>
+            <div class="course-container">
+                <div class="course-card">
+                    <img src="course6.jpg" alt="Course Image">
+                    <h5>Course Title 6</h5>
+                    <p>Rated by 180 people</p>
+                    <p class="rating">⭐⭐⭐⭐⭐ (4.9)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
+    <title>Email Verification</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
             height: 100vh;
             margin: 0;
         }
-        .error-container {
+        .verification-container {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -24,17 +24,17 @@
             width: 100%;
             text-align: center;
         }
-        .error-container img {
+        .verification-container img {
             width: 120px;
             height: 120px;
             margin-bottom: 15px;
         }
-        .error-container h1 {
-            font-size: 28px;
+        .verification-container h1 {
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #dc3545;
+            color: #28a745;
         }
-        .error-container p {
+        .verification-container p {
             font-size: 16px;
             color: #6c757d;
         }
@@ -49,11 +49,14 @@
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <img src="../../../static/imgs/404_image.png" alt="Error Image">
-        <h1>404 - Page Not Found</h1>
-        <p>Sorry, the page you are looking for does not exist.</p>
-        <a href="/" class="btn btn-primary w-100 mt-3">Go to Homepage</a>
+    <div class="verification-container">
+        <img src="../../../../static/imgs/verify_images.png" alt="Email Verification Image">
+        <h1>Verify Your Email</h1>
+        <p>Thank you for signing up! Please verify your email address to activate your account.</p>
+        <a href="{{ verification_link }}" class="btn btn-primary w-100 mt-3">Verify My Email</a>
+        <p class="form-text mt-3">If the button above does not work, you can also verify your email by clicking the link below:</p>
+        <p class="form-text"><a href="{{ verification_link }}">{{ verification_link }}</a></p>
+        <p class="form-text mt-3">If you did not sign up for an account, please ignore this email.</p>
     </div>
 
     <!-- Bootstrap JS -->
