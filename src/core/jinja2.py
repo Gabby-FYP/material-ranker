@@ -12,12 +12,23 @@ def render_template(
     response: Response,
     template_name: str,
     context: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
 ) -> HTMLResponse:
     """Render a template."""
     context = context or {}
-    context["request"] = request
+    headers = headers or {}
+    headers.update(**dict(response.headers))
+    context["request"] = request    
     return templates.TemplateResponse(
-        template_name, 
-        {"request": request, "context": context},
-        headers=response.headers,
+        template_name,
+        context=context,
+        headers=headers,
     )
+
+
+def render_email_template(
+    template_name: str,
+    context: dict[str, Any],
+) -> str:
+    """Render email template."""
+    return templates.get_template(template_name).render(**context)

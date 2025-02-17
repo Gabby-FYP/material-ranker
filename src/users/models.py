@@ -11,6 +11,7 @@ class User(SQLModel, table=True):
     email: EmailStr = Field(unique=True, index=True)
     password: str | None
 
+    is_active: bool = Field(default=False)
     last_login_datetime: datetime | None
     created_datetime: datetime | None = Field(
         default=None,

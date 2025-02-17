@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block body %}
+  <div id="body-container" class="h-100 w-100">
+    {% block nav_bar %}
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
@@ -47,16 +49,19 @@
         </div>
       </div>
     </nav>
+    {% endblock nav_bar %}
 
     {% block body_I %} {% endblock body_I %}
 
-    <!-- Footer -->
-    <footer class="navbar fixed-bottom bg-dark text-white p-3">
-      <div class="container text-center w-100">
-        <p class="w-100 mb-0 text-center">
-          &copy; {{timestamp}} Your Company. All rights reserved.
-        </p>
-      </div>
-    </footer>
-
+    {% block footer %}
+      <!-- Footer -->
+      <footer class="navbar fixed-bottom bg-dark text-white p-3">
+        <div class="container text-center w-100">
+          <p class="w-100 mb-0 text-center">
+            &copy; {{timestamp}} Your Company. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    {% endblock footer %}
+  </div>
 {% endblock body %}

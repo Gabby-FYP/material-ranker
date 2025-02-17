@@ -15,3 +15,14 @@ class UserSignupFormValidate(BaseModel):
     matric_number: int | None = None
     email: EmailStr | None = None
     password: Password | None = None
+
+
+class LoginForm(BaseModel):
+    email: EmailStr
+    password: Password
+
+
+class LoginFormValidate(BaseModel):
+    email: EmailStr | None = None
+    password: Password | None = None
+

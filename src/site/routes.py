@@ -1,17 +1,13 @@
 from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
-import sentry_sdk
-from fastapi import FastAPI, Request, Response, Depends, Form
-from fastapi.staticfiles import StaticFiles
-from src.core.config import settings
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import Request, Response, Depends, Form
 from src.core.dependecies import check_htmx_request, push_htmx_history
 from src.core.jinja2 import render_template
 from typing import Annotated
 
 from src.users.models import User
-from src.users.services import user_signup_service
-from src.users.schemas import UserSignupForm, UserSignupFormValidate
-
+from src.users.services import user_signup_service, verify_user_email_service
+from src.users.schemas import UserSignupFormValidate
 
 
 router = APIRouter()
@@ -84,23 +80,66 @@ def signup_page(
 def signup_form(
     request: Request,
     response: Response,
-    data: Annotated[User, Depends(user_signup_service)]
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(user_signup_service)]
 ) -> HTMLResponse:
     """Perform user signup."""
-    return HTMLResponse('')
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/signup/success/'},
+            template_name="site/pages/auth/signup_successful.html",
+        )
+
+    return RedirectResponse(url="/signup/success/")
 
 
 @router.patch(
     "/signup/validate/",
     response_class=HTMLResponse,
 )
-def signup_form(
+def validate_signup_form(
     request: Request,
     response: Response,
     data: Annotated[UserSignupFormValidate, Form()]
 ) -> HTMLResponse:
-    """Perform user signup."""
+    """Validate user signup form."""
     return HTMLResponse('')
+
+
+@router.get(
+    "/signup/success/", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def signup_success(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+) -> HTMLResponse:
+    """Perform user signup."""
+    return render_template(
+        request=request, 
+        response=response,
+        headers={'HX-Retarget': 'body'},
+        template_name="site/pages/auth/signup_successful.html"
+    )
+
+
+@router.get("/verify-email/{email_token}/", response_class=HTMLResponse)
+def email_verification_page(
+    request: Request,
+    response: Response,
+    user: Annotated[User | None, Depends(verify_user_email_service)],
+) -> HTMLResponse:
+    """Verify a users email address."""
+    return render_template(
+        request=request, 
+        response=response,
+        context={'user': user},
+        template_name="site/pages/auth/email_verified.html",
+    )
 
 
 @router.get(

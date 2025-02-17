@@ -1,0 +1,21 @@
+{% extends "site/pages/auth/base.html" %}
+
+{% block nav_bar %} {% endblock nav_bar %}
+
+{% block body_I %}
+<div class="d-flex h-100 w-100 justify-content-center align-items-center">
+    <div class="verification-container">
+        {% if user %}
+            <img src="/static/imgs/verify_images.png" alt="Email Verified Image">
+            <h1>Email Verified</h1>
+            <p>Your email has been successfully verified. You can now login below.</p>
+            <a href="/login/" class="btn btn-primary w-100 mt-3">Proceed to Login</a>
+        {% else %}
+            <img src="/static/imgs/verify_images.png" alt="Email Verified Image">
+            <h1 class="text-warning">Unable to verify Email</h1>
+            <p>This page is no longer valid or has expired.</p>
+            <a href="/" class="btn btn-primary w-100 mt-3">Back to home page</a>
+        {% endif %}
+    </div>    
+</div>
+{% endblock body_I %}

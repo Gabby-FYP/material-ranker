@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     )
 
     API_V1_STR: str = "/api/v1"
+    DOMAIN: str = '127.0.0.1'
+    PORT: str = '8000'
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     PROJECT_NAME: str
@@ -45,6 +47,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str | None = None
     EMAILS_FROM_EMAIL: str | None = None
     EMAILS_FROM_NAME: str | None = None
+    SMTP_AUTH_SUPPORT: bool = False
 
     # Celery settings
     CELERY_BROKER_URL: str = "redis://localhost:6379"
@@ -98,6 +101,14 @@ class Settings(BaseSettings):
         )
 
         return self
+    
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def server_host(self) -> str:
+        # Use HTTPS for anything other than local development
+        if self.ENVIRONMENT == "local":
+            return f"http://{self.DOMAIN}:{self.PORT}"
+        return f"https://{self.DOMAIN}"
 
 
 settings = Settings()  # type: ignore
