@@ -1,12 +1,14 @@
-from fastapi import Form, Depends, status, Path
+from uuid import uuid4
+from fastapi import Form, Depends, Response, status, Path
 from typing import Annotated
 
 from sqlmodel import Session, select, or_
 from src.core.dependecies import require_db_session
-from src.core.security import decrypt_token, get_password_hash
+from src.core.security import decrypt_token, get_password_hash, verify_password
+from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
 from src.libs.exceptions import ServiceError, BadRequestError
-from src.users.schemas import UserSignupForm
-from src.users.models import User
+from src.users.schemas import LoginForm, UserSignupForm
+from src.models import User
 from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
 
@@ -74,4 +76,35 @@ def verify_user_email_service(
     user.is_active = True
     session.add(user)
     session.commit()
+    return user
+
+
+def user_login_service(
+    response: Response,
+    session: Annotated[Session, Depends(require_db_session)],
+    form_data: Annotated[LoginForm, Form()],
+) -> User:
+    """Login a user."""
+
+    user = session.exec(
+        select(User).where(User.email == form_data.email)
+    ).first()
+
+    if not user or not verify_password(form_data.password, user.password):
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid email or password",
+        )
+    
+    if not user.is_active:
+        send_email_verification_mail.delay(user_id=user.id)
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have not verified your email address. Please check your email for the verification link",
+        )
+
+    session = uuid4()
+    SessionBackend.create(session, SessionData(id=user.id))
+    SessionCookie.attach_to_response(response, session)
+
     return user
