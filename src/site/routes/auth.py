@@ -5,8 +5,8 @@ from src.core.dependecies import check_htmx_request, push_htmx_history
 from src.core.jinja2 import render_template
 from typing import Annotated
 
-from src.users.models import User
-from src.users.services import user_signup_service, verify_user_email_service
+from src.models import User
+from src.users.services import user_login_service, user_signup_service, verify_user_email_service
 from src.users.schemas import UserSignupFormValidate
 
 
@@ -23,31 +23,6 @@ def landing_page(
         request=request,
         response=response,
         template_name="site/pages/landing.html"
-    )
-
-
-@router.get(
-    "/login/", 
-    dependencies=[Depends(push_htmx_history)],
-    response_class=HTMLResponse
-)
-def login_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-)  -> HTMLResponse:
-    """Render login page."""
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            template_name="site/pages/auth/fragments/login.html",
-        )
-
-    return render_template(
-        request=request,
-        response=response,
-        template_name="site/pages/auth/login.html"
     )
 
 
@@ -139,6 +114,75 @@ def email_verification_page(
         response=response,
         context={'user': user},
         template_name="site/pages/auth/email_verified.html",
+    )
+
+
+@router.get(
+    "/login/", 
+    dependencies=[Depends(push_htmx_history)],
+    response_class=HTMLResponse
+)
+def user_login_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+)  -> HTMLResponse:
+    """Render login page."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            template_name="site/pages/auth/fragments/login.html",
+        )
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/auth/login.html"
+    )
+
+
+@router.post("/login/", response_class=HTMLResponse)
+def user_login_form(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(user_login_service)],
+) -> HTMLResponse:
+    """Process user login form."""
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/materials/', 'HX-Redirect': '/materials/'},
+            template_name="site/pages/user/cource_materials.html",
+        )
+
+    return RedirectResponse(url="/materials/")
+
+
+@router.get(
+    "/admin_login/", 
+    dependencies=[Depends(push_htmx_history)],
+    response_class=HTMLResponse
+)
+def admin_login_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+)  -> HTMLResponse:
+    """Render login page."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            template_name="site/pages/auth/fragments/admin_login.html",
+        )
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/auth/admin_login.html"
     )
 
 

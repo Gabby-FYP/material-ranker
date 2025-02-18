@@ -19,10 +19,5 @@ class UserSignupFormValidate(BaseModel):
 
 class LoginForm(BaseModel):
     email: EmailStr
-    password: Password
-
-
-class LoginFormValidate(BaseModel):
-    email: EmailStr | None = None
-    password: Password | None = None
+    password: str
 

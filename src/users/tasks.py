@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from src.libs.schemas import EmailUserParams
-from src.users.models import User
+from src.models import User
 from src.worker import celery_app
 from src.libs.utils import send_html_mail
 from uuid import UUID

@@ -1,0 +1,97 @@
+/* Base Styles */
+body {
+    height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  /* Auth Container */
+  .auth-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 30rem;
+  }
+  
+  .auth-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  /* Primary Button */
+  .auth-container > .btn-primary {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+  }
+  .auth-container > .btn-primary:hover {
+    background-color: #5a54d9;
+    border-color: #5a54d9;
+  }
+  
+  /* Outline Secondary Button */
+  .auth-container > .btn-outline-secondary {
+    color: #6c63ff;
+    border-color: #6c63ff;
+  }
+  .auth-container > .btn-outline-secondary:hover {
+    background-color: #e9e7ff;
+    border-color: #5a54d9;
+    color: #5a54d9;
+  }
+  
+  /* Links */
+  .auth-container > a,
+  .form-text a,
+  .form-text p a {
+    color: #6c63ff;
+    text-decoration: none;
+  }
+  .auth-container > a:hover,
+  .form-text a:hover,
+  .form-text p a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Additional Text */
+  .password-strength {
+    margin-top: 10px;
+    text-align: left;
+  }
+  
+  /* Logo Image */
+  .logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  /* Verification Container */
+  .verification-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .verification-container img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 15px;
+  }
+  
+  .verification-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #28a745;
+  }
+  
+  .verification-container p {
+    font-size: 16px;
+    color: #6c757d;
+  }
+  
