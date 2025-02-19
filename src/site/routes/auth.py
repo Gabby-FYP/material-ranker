@@ -6,8 +6,8 @@ from src.core.jinja2 import render_template
 from typing import Annotated
 
 from src.models import User
-from src.users.services import user_login_service, user_signup_service, verify_user_email_service
-from src.users.schemas import UserSignupFormValidate
+from src.users.services import request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
+from src.users.schemas import PasswordResetFormValidate, UserSignupFormValidate
 
 
 router = APIRouter()
@@ -69,7 +69,6 @@ def signup_form(
 
     return RedirectResponse(url="/signup/success/")
 
-
 @router.patch(
     "/signup/validate/",
     response_class=HTMLResponse,
@@ -81,6 +80,7 @@ def validate_signup_form(
 ) -> HTMLResponse:
     """Validate user signup form."""
     return HTMLResponse('')
+
 
 
 @router.get(
@@ -211,8 +211,45 @@ def paswword_reset_page(
     )
 
 
+@router.post("/reset-password/", response_class=HTMLResponse)
+def paswword_reset_form(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    _: Annotated[User, Depends(request_password_reset_service)]
+) -> HTMLResponse:
+    """Request password reset."""
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/reset-password/sent/'},
+            template_name="site/pages/auth/password_reset_email_sent.html",
+        )
+
+    return RedirectResponse(url="/reset-password/sent/")
+
 @router.get(
-    "/reset-password/set-password/", 
+    "/reset-password/sent/", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def paswword_reset_form_success(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+) -> HTMLResponse:
+    """Perform user signup."""
+    return render_template(
+        request=request, 
+        response=response,
+        headers={'HX-Retarget': 'body'},
+        template_name="site/pages/auth/password_reset_email_sent.html"
+    )
+
+
+@router.get(
+    "/reset-password/set-password/{reset_token}", 
     response_class=HTMLResponse,
     dependencies=[Depends(push_htmx_history)],
 )
@@ -234,3 +271,39 @@ def password_reset_set_password_page(
         response=response,
         template_name="site/pages/auth/password-reset-set-password.html"
     )
+
+@router.patch(
+    "/reset-password/set-password/{reset_token}", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def password_reset_set_password_form_validate(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    data: Annotated[PasswordResetFormValidate, Form()]
+) -> HTMLResponse:
+    """Render password reset set password page."""
+    return HTMLResponse('')
+
+@router.post(
+    "/reset-password/set-password/{reset_token}", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def password_reset_set_password_form(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    _: Annotated[None, Depends(reset_password_service)],
+) -> HTMLResponse:
+    """Render password reset set password page."""
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/login/'},
+            template_name="site/pages/auth/login.html",
+        )
+
+    return RedirectResponse(url="/login/")
