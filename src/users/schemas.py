@@ -1,5 +1,6 @@
 from typing import Any
-from pydantic import BaseModel, EmailStr, field_validator, ValidationError
+from typing_extensions import Self
+from pydantic import BaseModel, EmailStr, field_validator, ValidationError, model_validator
 from src.libs.fields import Password
 
 
@@ -21,3 +22,20 @@ class LoginForm(BaseModel):
     email: EmailStr
     password: str
 
+class ResetPasswordRequestForm(BaseModel):
+    email: EmailStr
+
+class PasswordResetForm(BaseModel):
+    password: Password
+    confirm_password: str 
+
+    @model_validator(mode='after')
+    def passwords_match(self) -> Self:
+        if self.password != self.confirm_password:
+            raise ValueError('Password and Confirm Password value are not same.')
+        return self
+
+
+class PasswordResetFormValidate(BaseModel):
+    password: Password | None = None
+    confirm_password: str | None = None
