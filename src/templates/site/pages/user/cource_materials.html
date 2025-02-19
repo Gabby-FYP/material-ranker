@@ -42,7 +42,7 @@
         
         /* Fix content overlapping */
         .main-content {
-            margin-left: 270px; /* Prevents overlap */
+            margin-left: 270px;
             padding: 20px;
             width: 100%;
         }
@@ -50,7 +50,15 @@
         .filter-container {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         .course-grid {
@@ -104,8 +112,10 @@
 
     <!-- Main Content -->
     <div class="main-content">
+        <h2>Course Materials</h2>
+        
         <div class="filter-container">
-            <h2>Course Materials</h2>
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search by Title, Topic..." onkeyup="filterCourses()">
             <select id="levelFilter" class="form-select" style="width: 200px;" onchange="filterCourses()">
                 <option value="all">All Levels</option>
                 <option value="100L">100 Level</option>
@@ -118,47 +128,39 @@
 
         <!-- Course Grid -->
         <div class="course-grid" id="courseGrid">
-            <!-- Course Cards -->
-            <div class="course-card" data-level="100L" onclick="viewCourse('Course Title 1')">
+            <div class="course-card" data-level="100L" data-title="Course Title 1" onclick="viewCourse('Course Title 1')">
                 <img src="https://via.placeholder.com/150" alt="Course Image">
                 <h5>Course Title 1</h5>
                 <p>Rated by 120 people</p>
                 <span class="badge bg-success">4.2 ★</span>
             </div>
             
-            <div class="course-card" data-level="200L" onclick="viewCourse('Course Title 2')">
+            <div class="course-card" data-level="200L" data-title="Course Title 2" onclick="viewCourse('Course Title 2')">
                 <img src="https://via.placeholder.com/150" alt="Course Image">
                 <h5>Course Title 2</h5>
                 <p>Rated by 95 people</p>
                 <span class="badge bg-warning">3.5 ★</span>
             </div>
 
-            <div class="course-card" data-level="300L" onclick="viewCourse('Course Title 3')">
+            <div class="course-card" data-level="300L" data-title="Course Title 3" onclick="viewCourse('Course Title 3')">
                 <img src="https://via.placeholder.com/150" alt="Course Image">
                 <h5>Course Title 3</h5>
                 <p>Rated by 150 people</p>
                 <span class="badge bg-primary">4.5 ★</span>
             </div>
 
-            <div class="course-card" data-level="400L" onclick="viewCourse('Course Title 4')">
+            <div class="course-card" data-level="400L" data-title="Course Title 4" onclick="viewCourse('Course Title 4')">
                 <img src="https://via.placeholder.com/150" alt="Course Image">
                 <h5>Course Title 4</h5>
                 <p>Rated by 200 people</p>
                 <span class="badge bg-primary">4.8 ★</span>
             </div>
 
-            <div class="course-card" data-level="500L" onclick="viewCourse('Course Title 5')">
+            <div class="course-card" data-level="500L" data-title="Course Title 5" onclick="viewCourse('Course Title 5')">
                 <img src="https://via.placeholder.com/150" alt="Course Image">
                 <h5>Course Title 5</h5>
                 <p>Rated by 180 people</p>
                 <span class="badge bg-success">4.7 ★</span>
-            </div>
-
-            <div class="course-card" data-level="100L" onclick="viewCourse('Course Title 6')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 6</h5>
-                <p>Rated by 170 people</p>
-                <span class="badge bg-warning">4.3 ★</span>
             </div>
 
         </div>
@@ -169,12 +171,18 @@
 
     <script>
         function filterCourses() {
-            let selectedLevel = document.getElementById("levelFilter").value;
+            let selectedLevel = document.getElementById("levelFilter").value.toLowerCase();
+            let searchQuery = document.getElementById("searchInput").value.toLowerCase();
             let courses = document.querySelectorAll(".course-card");
 
             courses.forEach(course => {
-                let courseLevel = course.getAttribute("data-level");
-                if (selectedLevel === "all" || courseLevel === selectedLevel) {
+                let courseLevel = course.getAttribute("data-level").toLowerCase();
+                let courseTitle = course.getAttribute("data-title").toLowerCase();
+                
+                let matchesLevel = selectedLevel === "all" || courseLevel === selectedLevel;
+                let matchesSearch = courseTitle.includes(searchQuery);
+
+                if (matchesLevel && matchesSearch) {
                     course.style.display = "block";
                 } else {
                     course.style.display = "none";
@@ -184,7 +192,6 @@
 
         function viewCourse(title) {
             alert("Viewing details for " + title);
-            // Replace with actual navigation, e.g., window.location.href = "course-details.html";
         }
     </script>
 </body>
