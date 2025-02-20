@@ -3,20 +3,19 @@ from uuid import uuid4
 from fastapi import Form, Depends, Response, status, Path
 from typing import Annotated, List
 
-from sqlmodgitel import Session, select, or_
+from sqlmodel import Session, select, or_
 from src.core.dependecies import require_db_session
 from src.core.security import decrypt_token, get_password_hash, verify_password
 from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
 from src.libs.exceptions import ServiceError, BadRequestError
 from src.users.schemas import AdminLoginForm, LoginForm, PasswordResetForm, SubmitRecommendationMaterialForm, UserSignupForm, ResetPasswordRequestForm
-from src.models import User, AdminUser, RecommendationMaterial
+from src.models import User, AdminUser
 from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
 from pydantic import EmailStr 
 
 from src.users.tasks import send_email_verification_mail, send_password_reset_mail
 
-RecommendationMaterial
 logger = getLogger(__name__)
 
 
@@ -191,69 +190,4 @@ def admin_user_login_service(
 
     return admin_user
 
-
-def submit_recommendation_request_service(
-    session: Annotated[Session, Depends(require_db_session)],
-    form_data: Annotated[SubmitRecommendationMaterialForm, Form()]
-) -> RecommendationMaterial:
-    """ Submit a new recommendation material """
-
-    try:
-        recommendation = SubmitRecommendationMaterialForm(
-        material_title = form_data.material_title,
-        authors = form_data.authors,
-        material_link = form_data.material_link,
-        cover_image = form_data.cover_image,
-        material_description = form_data.material_description,
-        status = "pending",
-        time_submitted = datetime.now(datetime.UTC)
-        )
-        session.add(recommendation)
-        session.commit()
-        return recommendation
-    except SQLAlchemyError as error:
-        session.rollback()
-        logger.error(f"An error occurred while submitting recommendation: {error}")
-        raise ServiceError(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while submitting your recommendation.",
-        ) from error
-
-
-def get_all_recommendation_service(
-        session: Annotated[Session, Depends(require_db_session)],
-) -> List[RecommendationMaterial]:
-    """Retreive all materials that has been recommended by a user"""
-    return session.exec(select(RecommendationMaterial)).all()
-
-
-def update_recommendation_status_service(
-        session: Annotated[Session, Depends(require_db_session)],
-        recommendation_id: int,
-        status: str
-) -> RecommendationMaterial:
-    """Update the recommendation status"""
-    recommendation = session.get(RecommendationMaterial, recommendation_id)
-    if not recommendation:
-        raise BadRequestError(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Recommendation material not found.",
-        )
-    if status not in {"pending", "accepted", "rejected"}:
-        raise BadRequestError(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid status. Must be 'pending', 'accepted', or 'rejected'.",
-        )
-    try:
-        recommendation.status = status
-        session.add(recommendation)
-        session.commit()
-        return recommendation
-    except SQLAlchemyError as error:
-        session.rollback()
-        logger.error(f"Error updating recommendation status: {error}")
-        raise ServiceError(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while updating the recommendation status.",
-        ) from error
 

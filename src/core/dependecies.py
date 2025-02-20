@@ -4,7 +4,7 @@ from fastapi import Depends, Request, Response, status
 from sqlmodel import Session
 from src.core.db import engine
 from typing import Annotated
-from src.models import User
+from src.models import AdminUser, User
 from sqlmodel import select
 from src.libs.exceptions import AuthenticationError
 from src.core.sessions import (
@@ -38,6 +38,25 @@ def require_authenticated_user_session(
         )  
     
     return user
+
+
+
+def require_authenticated_admin_user_session(
+    db_session: Annotated[Session, Depends(require_db_session)],
+    session_id: Annotated[UUID, Depends(session_cookie)],
+    session_data: Annotated[SessionData, Depends(session_verifier)]
+) -> AdminUser:
+    """Return authenticated user."""
+
+    user = db_session.exec(select(AdminUser).where(AdminUser.id == session_data.id)).first()
+    if not user:
+        raise AuthenticationError(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Unauthorized"
+        )  
+    
+    return user
+
 
 
 def check_htmx_request(request: Request) -> bool:

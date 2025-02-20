@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, List, Optional
 from typing_extensions import Self
 from pydantic import BaseModel, EmailStr, field_validator, ValidationError, model_validator, HttpUrl
@@ -53,7 +53,7 @@ class SubmitRecommendationMaterialForm(BaseModel):
     material_link: HttpUrl
     cover_image: Optional[str] = None
     status: str = "pending"
-    time_submitted: datetime = datetime.now(datetime.UTC)
+    time_submitted: datetime = datetime.now(timezone.utc)
     material_description: Optional[str]
 
 @classmethod
