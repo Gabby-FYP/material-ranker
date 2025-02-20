@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379"
 
     # First Admin User settings
-    EMAIL_TEST_USER: str = "test@example.com"
+    FIRST_SUPERUSER_EMAIL: str = "test@example.com"
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
 
