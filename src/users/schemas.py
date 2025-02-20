@@ -1,6 +1,7 @@
-from typing import Any
+from datetime import datetime
+from typing import Any, List, Optional
 from typing_extensions import Self
-from pydantic import BaseModel, EmailStr, field_validator, ValidationError, model_validator
+from pydantic import BaseModel, EmailStr, field_validator, ValidationError, model_validator, HttpUrl
 from src.libs.fields import Password
 
 
@@ -39,3 +40,27 @@ class PasswordResetForm(BaseModel):
 class PasswordResetFormValidate(BaseModel):
     password: Password | None = None
     confirm_password: str | None = None
+
+
+class AdminLoginForm(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class SubmitRecommendationMaterialForm(BaseModel):
+    material_title: str
+    authors: List[str]
+    material_link: HttpUrl
+    cover_image: Optional[str] = None
+    status: str = "pending"
+    time_submitted: datetime = datetime.now(datetime.UTC)
+    material_description: Optional[str]
+
+@classmethod
+@field_validator("status")
+def validate_status(cls, value: str) -> str:
+    allowed_statuses = {"pending", "accepted", "rejected"}
+    if value not in allowed_statuses:
+        raise ValueError("Invalid status. Must be 'pending', 'accepted', or 'rejected'.")
+    return value
+
