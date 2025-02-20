@@ -45,17 +45,4 @@ class AdminUser(SQLModel, table=True):
         default=None,
         sa_column=Column(DateTime(timezone=True), onupdate=func.now(), nullable=True),
     )
-
-
-class RecommendationMaterial(SQLModel, table=True):
-    id: int = Field(primary_key=True, index=True, sa_column=Column(auto_increment=True))
-    material_title: str
-    authors: List[str]  # List of authors
-    material_link: str  # Required field
-    cover_image: str | None  # Optional field for image URL or file path
-    status: str = Field(default="pending")  # Default status is pending
-    material_description: str | None 
-    time_submitted: datetime = Field(
-        sa_column=Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    )
-
+    

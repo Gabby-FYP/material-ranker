@@ -5,8 +5,8 @@ from src.core.dependecies import check_htmx_request, push_htmx_history
 from src.core.jinja2 import render_template
 from typing import Annotated
 
-from src.models import User
-from src.users.services import request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
+from src.models import AdminUser, User
+from src.users.services import admin_user_login_service, request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
 from src.users.schemas import PasswordResetFormValidate, UserSignupFormValidate
 
 
@@ -184,6 +184,25 @@ def admin_login_page(
         response=response,
         template_name="site/pages/auth/admin_login.html"
     )
+
+
+@router.post("/admin_login/", response_class=HTMLResponse)
+def admin_login_form(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[AdminUser, Depends(admin_user_login_service)],
+) -> HTMLResponse:
+    """Process admin user login form."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/admin_dashboard/', 'HX-Redirect': '/admin_dashboard/'},
+            template_name="site/pages/admin/admin_dashboard.html"
+        )
+    return RedirectResponse(url="/admin_dashboard/")
+
 
 
 @router.get(
