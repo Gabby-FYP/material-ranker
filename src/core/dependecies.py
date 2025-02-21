@@ -57,6 +57,18 @@ def require_authenticated_admin_user_session(
     return user
 
 
+def require_superuser(
+    user: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)]
+) -> AdminUser:
+    """Check if the user is a superuser."""
+    if not user.is_superuser:
+        raise AuthenticationError(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Permission Denied. super-user privileges are required for this action."
+        )  
+
+    return user
+
 
 def check_htmx_request(request: Request) -> bool:
     """Check if the request was made with htmx."""
