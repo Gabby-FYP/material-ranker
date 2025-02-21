@@ -67,3 +67,18 @@ def validate_status(cls, value: str) -> str:
         raise ValueError("Invalid status. Must be 'pending', 'accepted', or 'rejected'.")
     return value
 
+class ChangePasswordForm(BaseModel):
+    old_password: str
+    new_password: Password
+
+    @model_validator(mode='after')
+    def passwords_match(self) -> Self:
+        if self.old_password == self.new_password:
+            raise ValueError('old password and new password cannot be the same.')
+        return self
+
+
+
+class ChangePasswordValidate(BaseModel):
+    old_password: str | None
+    new_password: Password | None

@@ -67,10 +67,10 @@
 <body>
     <div class="sidebar">
         <h2>Welcome back, Oluwatobi!</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="recommendation_history.html">Recommendation history</a>
-        <a href="make_recommendation.html">Make a recommendation</a>
-        <a href="#" class="active">Profile</a>
+        <a href="/materials/">Dashboard</a>
+        <a href="/materials/reccommendation_history/">Recommendation history</a>
+        <a href="/materials/recommendation/">Make a recommendation</a>
+        <a href="/profile/" class="active">Profile</a>
         <a href="#">Logout</a>
     </div>
     
@@ -81,7 +81,7 @@
             <p><strong>Matric Number:</strong> 214893</p>
             <p><strong>Full Name:</strong> <span id="fullName">Oluwatobi</span></p>
             <p><strong>Password:</strong> <span id="password">********</span></p>
-            <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+            <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editProfileModal">Change Password</button>
         </div>
     </div>
 
@@ -90,18 +90,50 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                    <h5 class="modal-title" id="editProfileModalLabel">Change Password</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editProfileForm">
-                        <div class="mb-3">
-                            <label for="editFullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="editFullName" value="Oluwatobi">
+                    <form 
+                        id="change_passwords"
+                        hx-post="/save_changes/"
+                        hx-trigger="submit"
+                        hx-target-400="#form-error"
+                    >
+                        <div id="form-error"></div>
+                        <div class="mb-3 input-group">
+                            <label for="oldpasswd" class="form-labe col-12">Enter Old Password</label>
+                            <input type="password" class="form-control" id="oldpasswd">
+                            <span 
+                                  class="input-group-text" 
+                                  id="old_passwd_preview"
+                                  onclick="togglePassword('oldpasswd', this)"
+
+                            >👁</span>
+
                         </div>
-                        <div class="mb-3">
-                            <label for="editPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="editPassword">
+                        <div class="mb-3 input-group">
+                            <label for="#newpasswd" class="form-label col-12">Enter New Password</label>
+                            <input
+                                hx-patch="/save_changes/validate/"
+                                hx-trigger="change"
+                                hx-target="#password-validation-error"
+                                hx-target-422="#password-validation-error"
+                                hx-swap="innerHTML"
+                                hx-params="password"
+                                hx-sync="closest form:abort" 
+                                type="password" 
+                                class="form-control" 
+                                id="newpasswd"
+                            >
+                            <span 
+                                class="input-group-text" 
+                                id="newpasswd_preview"
+                                onclick="togglePassword('newpasswd', this)"
+
+                            >👁</span>
+
+                            <div class="text-danger text-start fw-lighter" id="password-validation-error"></div>
                         </div>
                         <button type="submit" class="btn btn-custom w-100">Save Changes</button>
                     </form>
@@ -109,17 +141,36 @@
             </div>
         </div>
     </div>
+    <script src="/static/external/htmx/htmx.min.js"></script>
+    <script src="/static/external/htmx/response-targets.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('editProfileForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            document.getElementById('fullName').textContent = document.getElementById('editFullName').value;
-            document.getElementById('password').textContent = '********'; // Mask password
+            document.getElementById('oldpasswd').textContent = '********';
+            document.getElementById('newpasswd').textContent = '********'; // Mask password
             var modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
             modal.hide();
         });
     </script>
+
+
+<script>
+
+    function togglePassword(inputId, button) {
+        let input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            button.innerText = "🙈";
+        } else {
+            input.type = "password";
+            button.innerText = "👁";
+        }
+    }
+    
+    </script>
+
 </body>
 </html>
