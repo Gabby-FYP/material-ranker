@@ -6,7 +6,7 @@ from src.core.jinja2 import render_template
 from typing import Annotated
 
 from src.models import AdminUser, User
-from src.users.services import admin_user_login_service, request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
+from src.users.services import admin_request_password_reset_service, admin_user_login_service, request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
 from src.users.schemas import PasswordResetFormValidate, UserSignupFormValidate
 
 
@@ -247,6 +247,53 @@ def paswword_reset_form(
         )
 
     return RedirectResponse(url="/reset-password/sent/")
+
+
+@router.get(
+        "/admin_reset_password/",
+        response_class=HTMLResponse,
+        dependencies=[Depends(push_htmx_history)],
+)
+def admin_password_reset_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+) -> HTMLResponse:
+    """Render admin password reset page """
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            template_name="site/pages/auth/fragments/admin_reset_password.html",
+        )
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name='site/pages/auth/password-reset.html'
+    )
+
+
+@router.post("/admin_reset_password/", response_class=HTMLResponse)
+def paswword_reset_form(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    _: Annotated[AdminUser, Depends(admin_request_password_reset_service)]
+) -> HTMLResponse:
+    """Request password reset."""
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/reset-password/sent/'},
+            template_name="site/pages/auth/password_reset_email_sent.html",
+        )
+
+    return RedirectResponse(url="/reset-password/sent/")
+
+
+
 
 @router.get(
     "/reset-password/sent/", 
