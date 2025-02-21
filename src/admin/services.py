@@ -1,16 +1,21 @@
 from sqlalchemy.exc import SQLAlchemyError
 from src.core.dependecies import require_db_session
-from src.core.security import decrypt_token, get_password_hash, verify_password
-from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
+from src.core.security import (
+    create_session_token, 
+    decrypt_token, 
+    get_password_hash, 
+    logout_sesssion, 
+    verify_password,
+)
 from src.libs.exceptions import BadRequestError, ServiceError
 from src.models import AdminUser
 from src.users.schemas import AdminLoginForm, AdminResetPasswordRequestForm, PasswordResetForm
 from src.libs.log import logger
 from src.admin.tasks import send_admin_password_reset_mail
-from fastapi import Depends, Form, Path, Response, status
+from fastapi import Depends, Form, Path, Request, Response, status
 from sqlmodel import Session, select
 from typing import Annotated
-from uuid import uuid4
+from src.core.sessions import cookie as SessionCookie
 
 
 def admin_user_login_service(
@@ -36,10 +41,7 @@ def admin_user_login_service(
             detail="This account is no longer active.",
         )
 
-    session = uuid4()
-    SessionBackend.create(session, SessionData(id=admin_user.id))
-    SessionCookie.attach_to_response(response, session)
-
+    create_session_token(user_id=admin_user.id, response=response)
     return admin_user
 
 
@@ -92,3 +94,12 @@ def admin_reset_password_service(
             detail="An error occurred while resetting your password.",
         ) from error
 
+
+def logout_service(
+    request: Request,
+    response: Response,
+) -> None:
+    """Logout a user."""
+
+    session_id = request.cookies.get(SessionCookie.model.name, '')
+    logout_sesssion(session_id=session_id, response=response)
