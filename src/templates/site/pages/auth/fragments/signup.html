@@ -1,7 +1,7 @@
 <div id="auth-swap-container">
     <h1>Create Account</h1>
     <form
-        hx-post="/signup/"
+        hx-post="/accounts/signup/"
         hx-trigger="submit"
         hx-target-400="#form-error"
     >
@@ -21,7 +21,7 @@
         <div class="mb-3 position-relative input-group" hx-ext="response-targets">
             <label for="password" class="form-label visually-hidden">Password</label>
             <input 
-                hx-patch="/signup/validate/"
+                hx-patch="/accounts/signup/validate/"
                 hx-trigger="change"
                 hx-target="#password-validation-error"
                 hx-target-422="#password-validation-error"
@@ -74,8 +74,8 @@
     <p class="form-text mt-3">
         Already have an account? 
         <a
-            href="/login/"
-            hx-get="/login/"
+            href="/accounts/login/"
+            hx-get="/accounts/login/"
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#auth-swap-container"

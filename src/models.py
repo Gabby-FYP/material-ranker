@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 from sqlmodel import SQLModel, Field, Column, DateTime, func
 import uuid
 from pydantic import EmailStr

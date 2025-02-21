@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
-from typing import Any, List, Optional
+from typing import List, Optional
 from typing_extensions import Self
-from pydantic import BaseModel, EmailStr, field_validator, ValidationError, model_validator, HttpUrl
+from pydantic import BaseModel, EmailStr, field_validator, model_validator, HttpUrl
 from src.libs.fields import Password
 
 

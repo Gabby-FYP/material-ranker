@@ -1,7 +1,7 @@
 <div id="auth-swap-container">
     <h3>Welcome Back</h3>
     <form 
-        hx-post="/admin_login/"
+        hx-post="/admin/login/"
         hx-trigger="submit"
         hx-target-400="#form-error"
     >
@@ -9,7 +9,7 @@
         <p class="text-muted mb-0">Select Role</p>
         <div class="btn-group role-select mb-3" role="group" aria-label="Role Selection">
             <button 
-                hx-get="/login/"
+                hx-get="/accounts/login/"
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#auth-swap-container"
@@ -17,7 +17,7 @@
                 class="btn btn-outline-secondary"
             >Student</button>
             <button 
-                hx-get="/admin_login/"
+                hx-get="/admin/login/"
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#auth-swap-container"
@@ -48,8 +48,8 @@
         </div>
         <div class="d-flex justify-content-between mb-3">
             <a 
-                href="/admin_reset_password/"
-                hx-get="/admin_reset_password/"
+                href="/admin/reset-password/"
+                hx-get="/admin/reset-password/"
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#auth-swap-container"    

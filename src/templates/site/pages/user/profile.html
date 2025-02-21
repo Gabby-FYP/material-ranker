@@ -96,7 +96,7 @@
                 <div class="modal-body">
                     <form 
                         id="change_passwords"
-                        hx-post="/save_changes/"
+                        hx-post="/accounts/save-changes/"
                         hx-trigger="submit"
                         hx-target-400="#form-error"
                     >
@@ -115,7 +115,7 @@
                         <div class="mb-3 input-group">
                             <label for="#newpasswd" class="form-label col-12">Enter New Password</label>
                             <input
-                                hx-patch="/save_changes/validate/"
+                                hx-patch="/accounts/save-changes/validate/"
                                 hx-trigger="change"
                                 hx-target="#password-validation-error"
                                 hx-target-422="#password-validation-error"

@@ -3,7 +3,6 @@ from uuid import UUID
 
 from redis import Redis
 from src.core.config import settings
-from uuid import UUID
 
 from typing import Generic
 
@@ -37,7 +36,7 @@ class RedisSessionBackend(Generic[ID, SessionModel], SessionBackend[ID, SessionM
         if self.redis_session.exists(f'session:{session_id}'):
             raise BackendError("create can't overwrite an existing session")
 
-        response = self.redis_session.json().set(
+        self.redis_session.json().set(
             name=f'session:{session_id}',
             path=Path.root_path(),
             obj=data.model_dump(mode='json'), 

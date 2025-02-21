@@ -1,7 +1,6 @@
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Any
 
 import smtplib
 

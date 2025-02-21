@@ -4,26 +4,23 @@ from fastapi import Request, Response, Depends, Form
 from src.core.dependecies import check_htmx_request, push_htmx_history
 from src.core.jinja2 import render_template
 from typing import Annotated
-
-from src.models import AdminUser, User
-from src.users.services import admin_request_password_reset_service, admin_user_login_service, change_user_password_service, request_password_reset_service, reset_password_service, user_login_service, user_signup_service, verify_user_email_service
-from src.users.schemas import ChangePasswordValidate, PasswordResetFormValidate, UserSignupFormValidate
+from src.models import User
+from src.users.services import (
+    change_user_password_service, 
+    request_password_reset_service, 
+    reset_password_service, 
+    user_login_service, 
+    user_signup_service, 
+    verify_user_email_service,
+)
+from src.users.schemas import (
+    ChangePasswordValidate, 
+    PasswordResetFormValidate, 
+    UserSignupFormValidate,
+)
 
 
 router = APIRouter()
-
-
-@router.get("/", response_class=HTMLResponse)
-def landing_page(
-    request: Request,
-    response: Response,
-) -> HTMLResponse:
-    """Render landing page."""
-    return render_template(
-        request=request,
-        response=response,
-        template_name="site/pages/landing.html"
-    )
 
 
 @router.get(
@@ -63,11 +60,12 @@ def signup_form(
         return render_template(
             request=request, 
             response=response,
-            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/signup/success/'},
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/accounts/signup/success/'},
             template_name="site/pages/auth/signup_successful.html",
         )
 
-    return RedirectResponse(url="/signup/success/")
+    return RedirectResponse(url="/accounts/signup/success/")
+
 
 @router.patch(
     "/signup/validate/",
@@ -80,7 +78,6 @@ def validate_signup_form(
 ) -> HTMLResponse:
     """Validate user signup form."""
     return HTMLResponse('')
-
 
 
 @router.get(
@@ -162,50 +159,6 @@ def user_login_form(
 
 
 @router.get(
-    "/admin_login/", 
-    dependencies=[Depends(push_htmx_history)],
-    response_class=HTMLResponse
-)
-def admin_login_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-)  -> HTMLResponse:
-    """Render login page."""
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            template_name="site/pages/auth/fragments/admin_login.html",
-        )
-
-    return render_template(
-        request=request,
-        response=response,
-        template_name="site/pages/auth/admin_login.html"
-    )
-
-
-@router.post("/admin_login/", response_class=HTMLResponse)
-def admin_login_form(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    user: Annotated[AdminUser, Depends(admin_user_login_service)],
-) -> HTMLResponse:
-    """Process admin user login form."""
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/admin_dashboard/', 'HX-Redirect': '/admin_dashboard/'},
-            template_name="site/pages/admin/admin_dashboard.html"
-        )
-    return RedirectResponse(url="/admin_dashboard/")
-
-
-
-@router.get(
     "/reset-password/", 
     response_class=HTMLResponse,
     dependencies=[Depends(push_htmx_history)],
@@ -242,129 +195,11 @@ def paswword_reset_form(
         return render_template(
             request=request, 
             response=response,
-            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/reset-password/sent/'},
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/accounts/reset-password/sent/'},
             template_name="site/pages/auth/password_reset_email_sent.html",
         )
 
-    return RedirectResponse(url="/reset-password/sent/")
-
-
-@router.get(
-    "/profile/", 
-    response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
-)
-def user_profile_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-) -> HTMLResponse:
-    """Render user profile page."""
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            template_name="site/pages/user/profile.html",
-        )
-
-    return render_template(
-        request=request,
-        response=response,
-        template_name="site/pages/user/profile.html"
-    )
-
-
-@router.post(
-    "/save_changes/", 
-    response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
-)
-def change_user_password_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    user: Annotated[User, Depends(change_user_password_service)]
-) -> HTMLResponse:
-    """Render user profile page."""
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            template_name="site/pages/user/profile.html",
-        )
-
-    return render_template(
-        request=request,
-        response=response,
-        template_name="site/pages/user/profile.html"
-    )
-
-
-
-@router.post(
-    "/save_changes/validate", 
-    response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
-)
-def change_user_password_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    form_data: Annotated[ChangePasswordValidate, Form()]
-) -> HTMLResponse:
-    """Render user profile page."""
-    return HTMLResponse('')
-
-
-
-
-
-
-
-@router.get(
-        "/admin_reset_password/",
-        response_class=HTMLResponse,
-        dependencies=[Depends(push_htmx_history)],
-)
-def admin_password_reset_page(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-) -> HTMLResponse:
-    """Render admin password reset page """
-    if is_htmx:
-        return render_template(
-            request=request,
-            response=response,
-            template_name="site/pages/auth/fragments/admin_reset_password.html",
-        )
-
-    return render_template(
-        request=request,
-        response=response,
-        template_name='site/pages/auth/password-reset.html'
-    )
-
-
-@router.post("/admin_reset_password/", response_class=HTMLResponse)
-def paswword_reset_form(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    _: Annotated[AdminUser, Depends(admin_request_password_reset_service)]
-) -> HTMLResponse:
-    """Request password reset."""
-    if is_htmx:
-        return render_template(
-            request=request, 
-            response=response,
-            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/reset-password/sent/'},
-            template_name="site/pages/auth/password_reset_email_sent.html",
-        )
-
-    return RedirectResponse(url="/reset-password/sent/")
-
-
+    return RedirectResponse(url="/accounts/reset-password/sent/")
 
 
 @router.get(
@@ -410,19 +245,6 @@ def password_reset_set_password_page(
         template_name="site/pages/auth/password-reset-set-password.html"
     )
 
-@router.patch(
-    "/reset-password/set-password/{reset_token}", 
-    response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
-)
-def password_reset_set_password_form_validate(
-    request: Request,
-    response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    data: Annotated[PasswordResetFormValidate, Form()]
-) -> HTMLResponse:
-    """Render password reset set password page."""
-    return HTMLResponse('')
 
 @router.post(
     "/reset-password/set-password/{reset_token}", 
@@ -440,8 +262,90 @@ def password_reset_set_password_form(
         return render_template(
             request=request, 
             response=response,
-            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/login/'},
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/accounts/login/'},
             template_name="site/pages/auth/login.html",
         )
 
-    return RedirectResponse(url="/login/")
+    return RedirectResponse(url="/accounts/login/")
+
+
+@router.patch(
+    "/reset-password/set-password/{reset_token}", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def password_reset_set_password_form_validate(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    data: Annotated[PasswordResetFormValidate, Form()]
+) -> HTMLResponse:
+    """Render password reset set password page."""
+    return HTMLResponse('')
+
+
+@router.get(
+    "/profile/", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def user_profile_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+) -> HTMLResponse:
+    """Render user profile page."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            template_name="site/pages/user/profile.html",
+        )
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/user/profile.html"
+    )
+
+
+@router.post(
+    "/save-changes/", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def change_user_password_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(change_user_password_service)]
+) -> HTMLResponse:
+    """Render user profile page."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            template_name="site/pages/user/profile.html",
+        )
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/user/profile.html"
+    )
+
+
+@router.patch(
+    "/save-changes/validate", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def change_user_password_form_validation(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    form_data: Annotated[ChangePasswordValidate, Form()]
+) -> HTMLResponse:
+    """Render user profile page."""
+    return HTMLResponse('')
+
