@@ -134,3 +134,24 @@ def admin_login_form(
         )
     return RedirectResponse(url="/admin/dashboard/")
 
+
+@router.get(
+    "/logout/", 
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def logout_success(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+) -> HTMLResponse:
+    """Perform user logout."""
+    if is_htmx:
+        return render_template(
+            request=request, 
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Push-Url': '/', 'HX-Redirect': '/'},
+            template_name="site/pages/landing.html",
+        )
+
+    return RedirectResponse(url="/")
