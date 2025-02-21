@@ -8,7 +8,7 @@ from src.core.dependecies import require_db_session
 from src.core.security import decrypt_token, get_password_hash, verify_password
 from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
 from src.libs.exceptions import ServiceError, BadRequestError
-from src.users.schemas import AdminLoginForm, LoginForm, PasswordResetForm, SubmitRecommendationMaterialForm, UserSignupForm, ResetPasswordRequestForm
+from src.users.schemas import AdminLoginForm, AdminResetPasswordRequestForm, LoginForm, PasswordResetForm, SubmitRecommendationMaterialForm, UserSignupForm, ResetPasswordRequestForm
 from src.models import User, AdminUser
 from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
@@ -190,4 +190,53 @@ def admin_user_login_service(
 
     return admin_user
 
+
+def admin_request_password_reset_service(
+        session: Annotated[Session, Depends(require_db_session)],
+        form_data: Annotated[AdminResetPasswordRequestForm, Form()],
+) -> None:
+    """An admin requests for a password reset email"""
+    
+    user = session.exec(select(AdminUser).where(AdminUser.email == form_data.email)).first()
+    if not user:
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No account found with this email.",
+        )
+
+    send_password_reset_mail.delay(user_id=user.id)
+
+
+def admin_reset_password_service(
+    session: Annotated[Session, Depends(require_db_session)],
+    reset_token: Annotated[str, Path()],
+    form_data: Annotated[PasswordResetForm, Form()],
+) -> None:
+    """Reset password using a valid token."""
+
+    email = decrypt_token(token=reset_token, context='PASSWORD_RESET')
+    if not email:
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset token.",
+        )
+
+    user = session.exec(select(AdminUser).where(AdminUser.email == email)).first()
+    if not user:
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset token.",
+        )
+
+    try:
+        user.password = get_password_hash(form_data.password)
+        session.add(user)
+        session.commit()
+    except SQLAlchemyError as error:
+        session.rollback()
+        logger.error(f"Error resetting password: {error}")
+        raise ServiceError(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while resetting your password.",
+        ) from error
 

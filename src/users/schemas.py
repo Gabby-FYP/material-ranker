@@ -26,6 +26,9 @@ class LoginForm(BaseModel):
 class ResetPasswordRequestForm(BaseModel):
     email: EmailStr
 
+class AdminResetPasswordRequestForm(BaseModel):
+    email: EmailStr
+
 class PasswordResetForm(BaseModel):
     password: Password
     confirm_password: str 
