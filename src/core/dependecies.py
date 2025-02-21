@@ -13,7 +13,6 @@ from src.core.sessions import (
     SessionData,
 )
 
-from typing import Annotated
 
 
 def require_db_session() -> Generator[Session, None, None]:
