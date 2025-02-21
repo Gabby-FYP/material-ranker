@@ -1,198 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            display: flex;
-        }
-        .sidebar {
-            width: 250px;
-            background: #fff;
-            padding: 20px;
-            height: 100vh;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-        }
-        .sidebar h2 {
-            font-size: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            display: block;
-            padding: 10px;
-            margin: 10px 0;
-            color: #333;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            background: #6c63ff;
-            color: #fff;
-        }
-        
-        /* Fix content overlapping */
-        .main-content {
-            margin-left: 270px;
-            padding: 20px;
-            width: 100%;
-        }
+{% extends "site/pages/user/base.html" %}
 
-        .filter-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
 
-        .search-bar {
-            width: 50%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .course-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .course-card {
-            width: 250px;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .course-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .rating {
-            color: #ffc107;
-            font-size: 14px;
-        }
-
-        /* Responsive Fix */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="sidebar">
-        <h2>Welcome back, Oluwatobi!</h2>
-        <a href="/materials/" class="active">Dashboard</a>
-        <a href="/materials/reccommendation_history/">Recommendation history</a>
-        <a href="/materials/recommendation/">Make a recommendation</a>
-        <a href="/accounts/profile/">Profile</a>
-        <a href="/accounts/logout/">Logout</a>
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <h2>Course Materials</h2>
+    
+    <div class="filter-container">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search by Title, Topic..." onkeyup="filterCourses()">
+        <select id="levelFilter" class="form-select" style="width: 200px;" onchange="filterCourses()">
+            <option value="all">All Levels</option>
+            <option value="100L">100 Level</option>
+            <option value="200L">200 Level</option>
+            <option value="300L">300 Level</option>
+            <option value="400L">400 Level</option>
+            <option value="500L">500 Level</option>
+        </select>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <h2>Course Materials</h2>
-        
-        <div class="filter-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Search by Title, Topic..." onkeyup="filterCourses()">
-            <select id="levelFilter" class="form-select" style="width: 200px;" onchange="filterCourses()">
-                <option value="all">All Levels</option>
-                <option value="100L">100 Level</option>
-                <option value="200L">200 Level</option>
-                <option value="300L">300 Level</option>
-                <option value="400L">400 Level</option>
-                <option value="500L">500 Level</option>
-            </select>
+    <!-- Course Grid -->
+    <div class="course-grid" id="courseGrid">
+
+        <div class="course-card" data-level="200L" data-title="Course Title 2" onclick="viewCourse('Course Title 2')">
+            <img src="https://via.placeholder.com/150" alt="Course Image">
+            <h5>Course Title 2</h5>
+            <p>Rated by 95 people</p>
+            <span class="badge bg-warning">3.5 ★</span>
         </div>
 
-        <!-- Course Grid -->
-        <div class="course-grid" id="courseGrid">
-            <div class="course-card" data-level="100L" data-title="Course Title 1" onclick="viewCourse('Course Title 1')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 1</h5>
-                <p>Rated by 120 people</p>
-                <span class="badge bg-success">4.2 ★</span>
-            </div>
+        <div class="course-card" data-level="300L" data-title="Course Title 3" onclick="viewCourse('Course Title 3')">
+            <img src="https://via.placeholder.com/150" alt="Course Image">
+            <h5>Course Title 3</h5>
+            <p>Rated by 150 people</p>
+            <span class="badge bg-primary">4.5 ★</span>
+        </div>
+
+        <div class="course-card" data-level="400L" data-title="Course Title 4" onclick="viewCourse('Course Title 4')">
+            <img src="https://via.placeholder.com/150" alt="Course Image">
+            <h5>Course Title 4</h5>
+            <p>Rated by 200 people</p>
+            <span class="badge bg-primary">4.8 ★</span>
+        </div>
+
+        <div class="course-card" data-level="500L" data-title="Course Title 5" onclick="viewCourse('Course Title 5')">
+            <img src="https://via.placeholder.com/150" alt="Course Image">
+            <h5>Course Title 5</h5>
+            <p>Rated by 180 people</p>
+            <span class="badge bg-success">4.7 ★</span>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %} 
+<script>
+    function filterCourses() {
+        let selectedLevel = document.getElementById("levelFilter").value.toLowerCase();
+        let searchQuery = document.getElementById("searchInput").value.toLowerCase();
+        let courses = document.querySelectorAll(".course-card");
+
+        courses.forEach(course => {
+            let courseLevel = course.getAttribute("data-level").toLowerCase();
+            let courseTitle = course.getAttribute("data-title").toLowerCase();
             
-            <div class="course-card" data-level="200L" data-title="Course Title 2" onclick="viewCourse('Course Title 2')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 2</h5>
-                <p>Rated by 95 people</p>
-                <span class="badge bg-warning">3.5 ★</span>
-            </div>
+            let matchesLevel = selectedLevel === "all" || courseLevel === selectedLevel;
+            let matchesSearch = courseTitle.includes(searchQuery);
 
-            <div class="course-card" data-level="300L" data-title="Course Title 3" onclick="viewCourse('Course Title 3')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 3</h5>
-                <p>Rated by 150 people</p>
-                <span class="badge bg-primary">4.5 ★</span>
-            </div>
+            if (matchesLevel && matchesSearch) {
+                course.style.display = "block";
+            } else {
+                course.style.display = "none";
+            }
+        });
+    }
 
-            <div class="course-card" data-level="400L" data-title="Course Title 4" onclick="viewCourse('Course Title 4')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 4</h5>
-                <p>Rated by 200 people</p>
-                <span class="badge bg-primary">4.8 ★</span>
-            </div>
+    function viewCourse(title) {
+        alert("Viewing details for " + title);
+    }
+</script>
+{% endblock scripts %}
 
-            <div class="course-card" data-level="500L" data-title="Course Title 5" onclick="viewCourse('Course Title 5')">
-                <img src="https://via.placeholder.com/150" alt="Course Image">
-                <h5>Course Title 5</h5>
-                <p>Rated by 180 people</p>
-                <span class="badge bg-success">4.7 ★</span>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        function filterCourses() {
-            let selectedLevel = document.getElementById("levelFilter").value.toLowerCase();
-            let searchQuery = document.getElementById("searchInput").value.toLowerCase();
-            let courses = document.querySelectorAll(".course-card");
-
-            courses.forEach(course => {
-                let courseLevel = course.getAttribute("data-level").toLowerCase();
-                let courseTitle = course.getAttribute("data-title").toLowerCase();
-                
-                let matchesLevel = selectedLevel === "all" || courseLevel === selectedLevel;
-                let matchesSearch = courseTitle.includes(searchQuery);
-
-                if (matchesLevel && matchesSearch) {
-                    course.style.display = "block";
-                } else {
-                    course.style.display = "none";
-                }
-            });
-        }
-
-        function viewCourse(title) {
-            alert("Viewing details for " + title);
-        }
-    </script>
-</body>
-</html>

@@ -78,7 +78,6 @@ class ChangePasswordForm(BaseModel):
         return self
 
 
-
 class ChangePasswordValidate(BaseModel):
-    old_password: str | None
-    new_password: Password | None
+    old_password: str | None = None
+    new_password: Password | None = None
