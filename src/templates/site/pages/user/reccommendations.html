@@ -1,0 +1,36 @@
+{% extends "site/pages/user/base.html" %}
+
+
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <h2>Recommendation History</h2>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Material Title</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recommendation in recommendations %}
+                <tr>
+                    <td>{{ recommendation.title }}</td>
+                    <td>{{ recommendation.timestamp }}</td>
+                    <td>
+                        {% if recommendation.status == 'accepted' %}
+                            <span class="text-success">Accepted</span>
+                        {% else %}
+                            <span class="text-danger">Rejected</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}

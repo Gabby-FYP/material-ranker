@@ -1,0 +1,74 @@
+body {background-color: #f8f9fa;}
+.sidebar {
+    height: 100vh;
+    background: #f4f4f9;
+    padding: 20px;
+}
+.navbar-nav a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.navbar-nav a:hover, .sidebar a.active {
+    background: #cacaf1;
+    color: #333;
+}
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.course-card {
+    width: 250px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+.course-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.rating {
+    color: #ffc107;
+    font-size: 14px;
+}
+
+.profile-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+}
+.btn-custom {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    margin-top: 15px;
+}
+.btn-custom:hover {
+    background-color: #5a54e0;
+}

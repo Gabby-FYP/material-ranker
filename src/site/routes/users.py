@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Request, Response, Depends, Form
-from src.core.dependecies import check_htmx_request, push_htmx_history
+from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_user_session
 from src.core.jinja2 import render_template
 from typing import Annotated
 from src.models import User
@@ -18,6 +18,7 @@ from src.users.schemas import (
     PasswordResetFormValidate, 
     UserSignupFormValidate,
 )
+from src.site.routes.schemas import PageVariable
 
 
 router = APIRouter()
@@ -153,6 +154,7 @@ def user_login_form(
             response=response,
             headers={'HX-Retarget': 'body', 'HX-Push-Url': '/materials/', 'HX-Redirect': '/materials/'},
             template_name="site/pages/user/cource_materials.html",
+            context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
         )
 
     return RedirectResponse(url="/materials/")
@@ -293,6 +295,7 @@ def user_profile_page(
     request: Request,
     response: Response,
     is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(require_authenticated_user_session)]
 ) -> HTMLResponse:
     """Render user profile page."""
     if is_htmx:
@@ -300,19 +303,20 @@ def user_profile_page(
             request=request,
             response=response,
             template_name="site/pages/user/profile.html",
+            context={'user': user, 'pageVariable': PageVariable(active_nav='PROFILE')},
         )
 
     return render_template(
         request=request,
         response=response,
-        template_name="site/pages/user/profile.html"
+        template_name="site/pages/user/profile.html",
+        context={'user': user, 'pageVariable': PageVariable(active_nav='PROFILE')},
     )
 
 
 @router.post(
-    "/save-changes/", 
+    "/profile/change/", 
     response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
 )
 def change_user_password_page(
     request: Request,
@@ -326,24 +330,25 @@ def change_user_password_page(
             request=request,
             response=response,
             template_name="site/pages/user/profile.html",
+            headers={'HX-Retarget': 'body'},
+            context={'user': user, 'pageVariable': PageVariable(active_nav='PROFILE')},
         )
 
     return render_template(
         request=request,
         response=response,
-        template_name="site/pages/user/profile.html"
+        template_name="site/pages/user/profile.html",
+        context={'user': user, 'pageVariable': PageVariable(active_nav='PROFILE')},
     )
 
 
 @router.patch(
-    "/save-changes/validate", 
+    "/profile/change/validate/", 
     response_class=HTMLResponse,
-    dependencies=[Depends(push_htmx_history)],
 )
 def change_user_password_form_validation(
     request: Request,
     response: Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
     form_data: Annotated[ChangePasswordValidate, Form()]
 ) -> HTMLResponse:
     """Render user profile page."""

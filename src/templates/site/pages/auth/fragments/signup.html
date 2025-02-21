@@ -4,6 +4,8 @@
         hx-post="/accounts/signup/"
         hx-trigger="submit"
         hx-target-400="#form-error"
+        hx-target-422="#password-validation-error"
+        hx-swap="innerHTML"
     >
         <div id="form-error"></div>
         <div class="mb-3">
@@ -84,17 +86,6 @@
 </div>
 
 <script>
-
-function togglePassword(inputId, button) {
-    let input = document.getElementById(inputId);
-    if (input.type === "password") {
-        input.type = "text";
-        button.innerText = "🙈";
-    } else {
-        input.type = "password";
-        button.innerText = "👁";
-    }
-}
 
 // Validate password on form submission and highlight error if passwords do not match
 function checkPassword() {

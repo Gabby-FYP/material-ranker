@@ -174,9 +174,9 @@ def change_user_password_service(
     """A service to change an authenticated user password"""
 
     if not verify_password(form_data.old_password, user.password):
-        raise ServiceError(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while resetting your password.",
+        raise BadRequestError(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid old password.",
         )
     
     user.password = get_password_hash(form_data.new_password)
