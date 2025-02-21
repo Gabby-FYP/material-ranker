@@ -4,11 +4,11 @@ from fastapi import Form, Depends, Response, status, Path
 from typing import Annotated, List
 
 from sqlmodel import Session, select, or_
-from src.core.dependecies import require_db_session
+from src.core.dependecies import require_db_session, require_authenticated_user_session
 from src.core.security import decrypt_token, get_password_hash, verify_password
 from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
 from src.libs.exceptions import ServiceError, BadRequestError
-from src.users.schemas import AdminLoginForm, AdminResetPasswordRequestForm, LoginForm, PasswordResetForm, SubmitRecommendationMaterialForm, UserSignupForm, ResetPasswordRequestForm
+from src.users.schemas import AdminLoginForm, AdminResetPasswordRequestForm, ChangePasswordForm, LoginForm, PasswordResetForm, SubmitRecommendationMaterialForm, UserSignupForm, ResetPasswordRequestForm
 from src.models import User, AdminUser
 from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
@@ -240,3 +240,23 @@ def admin_reset_password_service(
             detail="An error occurred while resetting your password.",
         ) from error
 
+
+def change_user_password_service(
+    session:Annotated[Session, Depends(require_db_session)],
+    user: Annotated[User, Depends(require_authenticated_user_session)],
+    form_data: Annotated[ChangePasswordForm, Form()]
+) -> User:
+    """A service to change an authenticated user password"""
+
+    if not verify_password(form_data.old_password, user.password):
+        raise ServiceError(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while resetting your password.",
+        )
+    
+    user.password = get_password_hash(form_data.new_password)
+    session.add(user)
+    session.commit()
+    return user
+
+    
