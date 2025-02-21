@@ -1,11 +1,10 @@
-from uuid import uuid4
-from fastapi import Form, Depends, Response, status, Path
+from fastapi import Form, Depends, Request, Response, status, Path
 from typing import Annotated
 
 from sqlmodel import Session, select, or_
 from src.core.dependecies import require_db_session, require_authenticated_user_session
-from src.core.security import decrypt_token, get_password_hash, verify_password
-from src.core.sessions import SessionData, backend as SessionBackend, cookie as SessionCookie
+from src.core.security import create_session_token, decrypt_token, get_password_hash, logout_sesssion, verify_password
+from src.core.sessions import cookie as SessionCookie
 from src.libs.exceptions import ServiceError, BadRequestError
 from src.users.schemas import ChangePasswordForm, LoginForm, PasswordResetForm,  UserSignupForm, ResetPasswordRequestForm
 from src.models import User
@@ -13,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
 
 from src.users.tasks import send_email_verification_mail, send_password_reset_mail
+
 
 logger = getLogger(__name__)
 
@@ -102,11 +102,19 @@ def user_login_service(
             detail="You have not verified your email address. Please check your email for the verification link",
         )
 
-    session = uuid4()
-    SessionBackend.create(session, SessionData(id=user.id))
-    SessionCookie.attach_to_response(response, session)
-
+    create_session_token(user_id=user.id, response=response)
     return user
+
+
+def logout_service(
+    request: Request,
+    response: Response,
+) -> None:
+    """Logout a user."""
+
+    session_id = request.cookies.get(SessionCookie.model.name, '')
+    logout_sesssion(session_id=session_id, response=response)
+
 
 def request_password_reset_service(
     session: Annotated[Session, Depends(require_db_session)],
