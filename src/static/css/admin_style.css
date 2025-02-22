@@ -25,3 +25,86 @@
     border: none;
     margin-top: 10px;
 }
+.btn-purple {
+    background-color: #c0b0dc;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a2d9e;
+    border-color: #5a2d9e;
+.table {
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+.table thead th {
+    background-color: #007bff;
+    color: #ffffff;
+}
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a2d9e;
+    border-color: #5a2d9e; }
+}
+
+
+
+
+}
+.card-stats {
+    background-color: #f1e8ff;
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.card-stats h5 {
+    color: #6f42c1;
+    font-weight: bold;
+}
+.card-stats p {
+    font-size: 1.2rem;
+    color: #333;
+}
+.table {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.table th {
+    background-color: #e9ecef;
+    color: #333;
+}
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    color: #ffffff;
+}
+.btn-purple:hover {
+    background-color: #5a2d9e;
+    border-color: #5a2d9e;
+}
+.activity-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a2d9e;
+    border-color: #5a2d9e;
+}
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.form-control:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+}

@@ -1,9 +1,9 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Form, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
-
-from src.admin.services import admin_request_password_reset_service, admin_user_login_service
-from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_admin_user_session
+from src.admin.schemas import CreateAdminUserFormValidate
+from src.admin.services import admin_request_password_reset_service, admin_user_login_service, create_new_admin_users, delete_admin_user, get_all_admin_users
+from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_admin_user_session, require_superuser
 from src.core.jinja2 import render_template
 from src.models import AdminUser
 from src.site.routes.schemas import PageVariable
@@ -158,3 +158,107 @@ def logout_success(
         )
 
     return RedirectResponse(url="/")
+
+
+@router.get("/users/", response_class=HTMLResponse)
+def admin_user_list(
+    request: Request,
+    response: Response,
+    user: Annotated[AdminUser, Depends(require_superuser)],
+    users: Annotated[list[AdminUser], Depends(get_all_admin_users)]
+) -> HTMLResponse:
+    """Render the lists of all admin users """
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/create_admin.html",
+        context={
+            "user": user,
+            "users": users,
+            'pageVariable': PageVariable(active_nav='ADMIN_USERS')
+        },
+    )
+
+
+@router.post("/users/", response_class=HTMLResponse)
+def create_new_admin_user_form(
+    request: Request,
+    response: Response,
+    user: Annotated[AdminUser, Depends(require_superuser)],
+    new_user: Annotated[AdminUser, Depends(create_new_admin_users)],
+    users: Annotated[list[AdminUser], Depends(get_all_admin_users)]
+) -> HTMLResponse:
+    """Add a new admin user """
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/create_admin.html",
+        headers={'HX-Retarget': 'body'},
+        context={
+            "user": user,
+            "users": users,
+            'pageVariable': PageVariable(active_nav='ADMIN_USERS')
+        },
+    )
+
+
+@router.patch("/users/validate/", response_class=HTMLResponse)
+def validate_signup_form(
+    request: Request,
+    response: Response,
+    data: Annotated[CreateAdminUserFormValidate, Form()]
+) -> HTMLResponse:
+    """Validate user signup form."""
+    return HTMLResponse('')
+
+
+@router.delete("/users/{user_id}/", response_class=HTMLResponse)
+def delete_admin_user_form(
+    request: Request,
+    response: Response,
+    user: Annotated[AdminUser, Depends(require_superuser)],
+    _: Annotated[AdminUser, Depends(delete_admin_user)],
+    users: Annotated[list[AdminUser], Depends(get_all_admin_users)]
+) -> HTMLResponse:
+    """Add a new admin user """
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/create_admin.html",
+        headers={'HX-Retarget': 'body'},
+        context={
+            "user": user,
+            "users": users,
+            'pageVariable': PageVariable(active_nav='ADMIN_USERS')
+        },
+    )
+
+
+@router.get("/materials/", response_class=HTMLResponse)
+def admin_dashboard(
+    request: Request,
+    response: Response,
+    adminuser: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)]
+) -> HTMLResponse:
+    """Render the admin material page"""
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/materials.html",
+        context={"user": adminuser, 'pageVariable': PageVariable(active_nav='MATERIAL')},
+    )
+
+
+@router.get("/reccommendation/", response_class=HTMLResponse)
+def admin_recommendatio(
+    request: Request,
+    response: Response,
+    adminuser: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)]
+) -> HTMLResponse:
+    """Render the reccommendation page"""
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/reccommendation.html",
+        context={"user": adminuser, 'pageVariable': PageVariable(active_nav='RECOMMENDATION')},
+    )

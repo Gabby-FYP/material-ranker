@@ -1,159 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Admin</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            display: flex;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .sidebar {
-            width: 250px;
-            background: #fff;
-            padding: 20px;
-            height: 100vh;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .sidebar h2 {
-            font-size: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .sidebar a {
-            display: block;
-            padding: 10px;
-            margin: 10px 0;
-            color: #333;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            background: #6c63ff;
-            color: #fff;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 270px;
-            transition: background 0.3s ease, color 0.3s ease;
-            width: 100%;
-        }
-        .container {
-            max-width: 500px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin: auto;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        /* Dark Mode Styles */
-        .dark-mode {
-            background: #121212;
-            color: white;
-        }
-        .dark-mode .sidebar {
-            background: #1e1e1e;
-            color: white;
-        }
-        .dark-mode .container {
-            background: #1e1e1e;
-            color: white;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-        }
-        .dark-mode .sidebar a {
-            color: #ddd;
-        }
-        .dark-mode .sidebar a:hover, .dark-mode .sidebar a.active {
-            background: #6c63ff;
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="create_admin.html" class="active">Create Admin</a>
-        <a href="recommendation_history.html">Recommendation History</a>
-        <a href="profile.html">Profile</a>
-        <a href="logout.html">Logout</a>
-        <button class="btn btn-secondary w-100 mt-3" id="darkModeToggle">Toggle Dark Mode</button>
-    </div>
-    
+
+{% extends "site/pages/admin/base.html" %}
+
+{% block headII  %}
+<link rel="stylesheet" href="/static/css/admin_style.css">
+{% endblock headII %}
+        
+
+{% block content %}
     <!-- Main Content -->
-    <div class="content">
-        <h2 class="mb-4 text-center">Create Admin</h2>
-        <div class="container">
-            <form id="adminForm">
-                <div class="mb-3">
-                    <label for="fullName" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Create Admin</button>
-            </form>
+    <div class="container mt-4">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Admin Accounts</h2>
+                <button class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#createAdminModal">Create Admin</button>
+            </div>
+
+            <!-- Admin Accounts Table -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in users %}
+                    <tr>
+                        <td>{{ admin.fullname }}</td>
+                        <td>{{ admin.email }}</td>
+                        <td>{% if admin.is_superuser  %}Super Administrator{% else %}Administrator{% endif %}</td>
+                        <td>
+                            <span class="badge {% if admin.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                {% if admin.is_active %} Active {% else %} In-active {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if not admin.is_superuser  %}
+                                <button
+                                    hx-delete="/admin/users/{{admin.id}}/"
+                                    hx-trigger="click"
+                                    class="btn btn-sm btn-outline-danger"
+                                ><i class="bi bi-trash"></i></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Dark Mode Toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        const sidebar = document.querySelector('.sidebar');
-        const container = document.querySelector('.container');
 
-        if (localStorage.getItem('dark-mode') === 'enabled') {
-            enableDarkMode();
-        }
+    <div class="modal fade" id="createAdminModal" tabindex="-1" aria-labelledby="createAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAdminModalLabel">Create New Admin Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form 
+                    id="createAdminForm"
+                    hx-post="/admin/users/"
+                    hx-trigger="submit"
+                    hx-target-400="#form-error"
+                    hx-target-422="#password-validation-error"
+                    hx-swap="innerHTML"
+                    >
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" name="fullname" class="form-control" id="fullName" placeholder="Enter full name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="Enter email address" required>
+                        </div>
+                        <div class="mb-3 input-group">
+                            <label for="password"  class="form-label col-12">Temporary Password</label>
+                            <input 
+                            hx-patch="/admin/users/validate/"
+                            hx-trigger="change"
+                            hx-target="#password-validation-error"
+                            hx-target-422="#password-validation-error"
+                            hx-swap="innerHTML"
+                            type="password" 
+                            name="password"
+                            class="form-control" 
+                            id="password" 
+                            placeholder="Enter temporary password" 
+                            required>
+                            <span 
+                            class="input-group-text" 
+                            id="password_preview"
+                            onclick="togglePassword('password', this)"
+                        >👁</span>
+                        </div>
+                        <div class="mb-3 input-group">
+                            <label for="password"  class="form-label col-12">Confirm Temporary Password</label>
+                            <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Confirm the temporary password" required>
+                            <span 
+                            class="input-group-text" 
+                            id="confirm_password_preview"
+                            onclick="togglePassword('confirm_password', this)"
+                        >👁</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="createAdminForm" class="btn btn-primary">Create Admin Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        darkModeToggle.addEventListener('click', function() {
-            if (body.classList.contains('dark-mode')) {
-                disableDarkMode();
-            } else {
-                enableDarkMode();
-            }
-        });
-
-        function enableDarkMode() {
-            body.classList.add('dark-mode');
-            sidebar.classList.add('dark-mode');
-            container.classList.add('dark-mode');
-            localStorage.setItem('dark-mode', 'enabled');
-        }
-
-        function disableDarkMode() {
-            body.classList.remove('dark-mode');
-            sidebar.classList.remove('dark-mode');
-            container.classList.remove('dark-mode');
-            localStorage.setItem('dark-mode', 'disabled');
-        }
-
-        // Form Submission (Placeholder)
-        document.getElementById('adminForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            alert('Admin Created Successfully!');
-        });
-    </script>
-</body>
-</html>
+{% endblock content %}
