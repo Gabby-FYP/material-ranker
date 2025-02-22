@@ -1,0 +1,27 @@
+.content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 270px;
+}
+.card {
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+.card.blue { background: #007bff; }
+.card.green { background: #28a745; }
+.card.orange { background: #fd7e14; }
+.submission-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+.btn-view-all {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    margin-top: 10px;
+}

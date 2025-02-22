@@ -5,4 +5,10 @@ from typing import Literal
 
 
 class PageVariable(BaseModel):
-    active_nav: Literal['DASHBOARD', 'RECOMMENDATION', 'PROFILE']
+    active_nav: Literal[
+        'DASHBOARD', 
+        'RECOMMENDATION',
+        'ADMIN_USERS',
+        'MATERIAL', 
+        'PROFILE',
+    ]

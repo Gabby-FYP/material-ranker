@@ -6,6 +6,7 @@ from src.admin.services import admin_request_password_reset_service, admin_user_
 from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_admin_user_session
 from src.core.jinja2 import render_template
 from src.models import AdminUser
+from src.site.routes.schemas import PageVariable
 
 
 router = APIRouter()
@@ -22,7 +23,7 @@ def admin_dashboard(
         request=request,
         response=response,
         template_name="site/pages/admin/admin_dashboard.html",
-        context={"user": adminuser}
+        context={"user": adminuser, 'pageVariable': PageVariable(active_nav='DASHBOARD')},
     )
 
 
@@ -130,8 +131,10 @@ def admin_login_form(
             request=request,
             response=response,
             headers={'HX-Retarget': 'body', 'HX-Push-Url': '/admin/dashboard/', 'HX-Redirect': '/admin/dashboard/'},
-            template_name="site/pages/admin/admin_dashboard.html"
+            template_name="site/pages/admin/admin_dashboard.html",
+            context={'user': user, 'pageVariable': PageVariable(active_nav='DASHBOARD')}
         )
+
     return RedirectResponse(url="/admin/dashboard/")
 
 

@@ -1,0 +1,75 @@
+<li 
+    class="nav-item mb-2 fw-medium"
+    hx-get="/admin/dashboard/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2 {% if pageVariable.active_nav == 'DASHBOARD' %}active{% endif %}" href="#">
+        <i class="bi bi-bounding-box text-dark mx-2"></i>
+        Dashboard
+    </a>
+</li>
+<li 
+    class="nav-item mb-2 fw-medium"
+    hx-get="/admin/recommendations/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2 {% if pageVariable.active_nav == 'RECOMMENDATION' %}active{% endif %}" href="#">
+        <i class="bi bi-clipboard2-heart text-dark mx-2"></i>
+        Recommendation
+    </a>
+</li>
+<li 
+    class="nav-item mb-2 fw-medium"
+    hx-get="/admin/materials/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2 {% if pageVariable.active_nav == 'MATERIAL' %}active{% endif %}" href="#">
+        <i class="bi bi-bookshelf text-dark mx-2"></i>
+        Materials
+    </a>
+</li>
+
+{% if user.is_superuser %}
+<li 
+    class="nav-item mb-2 fw-medium"
+    hx-get="/admin/users/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2 {% if pageVariable.active_nav == 'ADMIN_USERS' %}active{% endif %}" href="#">
+        <i class="bi bi-people-fill text-dark mx-2"></i>
+        Users
+    </a>
+</li>
+{% endif %}
+
+<li 
+    class="nav-item mb-2 fw-medium d-flex d-sm-none"
+    hx-get="/admin/profile/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2 {% if pageVariable.active_nav == 'PROFILE' %}active{% endif %}" href="#">
+        <i class="bi bi-clipboard2-heart text-dark mx-2"></i>
+        Profile
+    </a>
+</li>
+<li class="nav-item mb-2 fw-medium"
+    hx-get="/admin/logout/"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-target="body"
+>
+    <a class="p-2" href="#">
+        <i class="bi bi-box-arrow-left text-dark mx-2"></i>
+        Logout
+    </a>
+</li>
