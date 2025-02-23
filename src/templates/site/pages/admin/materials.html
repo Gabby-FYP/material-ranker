@@ -1,0 +1,119 @@
+{% extends "site/pages/admin/base.html" %}
+
+{% block headII  %}
+<link rel="stylesheet" href="/static/css/admin_style.css">
+{% endblock headII %}
+
+
+{% block content %}
+
+ <!-- Main Content -->
+ <div class="container mt-4">
+
+    <!-- Search and Add Material -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="input-group w-50">
+            <input type="text" class="form-control" placeholder="Search materials..." aria-label="Search materials">
+            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+        </div>
+        <button class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">Add Material</button>
+    </div>
+
+    <!-- Materials Table -->
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Material</th>
+                <th scope="col">Size</th>
+                <th scope="col">Date</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Introduction to Physics (PDF)</td>
+                <td>2.5 MB</td>
+                <td>Oct 12, 2023</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td><i class="bi bi-file-earmark-play material-icon" style="color: #00ff00;"></i> Chemistry Lab Tutorial (MP4)</td>
+                <td>150 MB</td>
+                <td>Oct 11, 2023</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+            <tr>
+                <td><i class="bi bi-file-earmark-ppt material-icon" style="color: #ff9900;"></i> Math Fundamentals (PPT)</td>
+                <td>5.8 MB</td>
+                <td>Oct 10, 2023</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="uploadMaterialModal" tabindex="-1" aria-labelledby="uploadMaterialModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg for larger modal -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadMaterialModalLabel">Upload Material</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadMaterialForm">
+                        <!-- Material Details Section -->
+                        <div class="card p-4 mb-4 text-dark" style="background-color: #f1e8ff; border: none; border-radius: 10px;">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-file-earmark-text fs-3 me-2" style="color: #6f42c1;"></i>
+                                <h4>Material Details</h4>
+                            </div>
+                            <p class="text-muted">Fill in the details about your course material. The document will be processed automatically after upload.</p>
+    
+                            <div class="mb-3">
+                                <label for="materialTitle" class="form-label">Material Title</label>
+                                <input type="text" class="form-control" id="materialTitle" placeholder="Enter the title of your textbook or material" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="courseCode" class="form-label">Course Code</label>
+                                <input type="text" class="form-control" id="courseCode" placeholder="e.g., CS101, MATH201" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="4" placeholder="Briefly describe the material content" required></textarea>
+                            </div>
+                        </div>
+    
+                        <!-- Upload File Section -->
+                        <div class="card p-4 text-dark" style="background-color: #f1e8ff; border: none; border-radius: 10px;">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-upload fs-3 me-2" style="color: #6f42c1;"></i>
+                                <h4>Upload File</h4>
+                            </div>
+                            <p class="text-muted">Supported formats: PDF only (max 50MB)</p>
+    
+                            <div class="mb-3">
+                                <input type="file" class="form-control" id="fileUpload" accept=".pdf,.docx" required>
+                                <small class="text-muted">Drag & Drop or <a href="#" class="text-decoration-none">Choose File</a></small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="uploadMaterialForm" class="btn btn-purple w-100">Start Upload & Processing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+

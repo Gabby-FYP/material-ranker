@@ -49,3 +49,22 @@ def reccommendations_page(
         context={"user": user, "pageVariable": PageVariable(active_nav='RECOMMENDATION')},
     )
 
+
+@router.get(
+    "/rate-materials/",
+    response_class=HTMLResponse,
+    dependencies=[Depends(push_htmx_history)],
+)
+def rate_materials_page(
+    request: Request,
+    response: Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(require_authenticated_user_session)]
+) -> HTMLResponse:
+    """Render rate materials page"""
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/user/rate_material.html",
+        context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
+    )
