@@ -32,57 +32,47 @@
         <div class="col-md-3 col-sm-6">
             <div class="card card-stats">
                 <h5>Unvectorized Materials</h5>
-                <p>12</p>
+                <p>3</p>
             </div>
         </div>
     </div>
 
+    <!-- Quick Actions -->
+    <div class="mt-4 mb-4">
+        <h3>Quick Actions</h3>
+        <div class="d-flex gap-3">
+            <button class="btn btn-purple">Run Vectorization</button>
+            <button class="btn btn-purple">View Pending Reviews</button>
+        </div>
+    </div>
+</div>    
+    
     <!-- Recent Activities Table -->
     <div class="card p-4">
-        <h3>Recent Activities</h3>
+        <h3 class="text-dark">List Of Unvectorized Materials</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">Activity</th>
-                    <th scope="col">Course</th>
-                    <th scope="col">User</th>
+                    <th scope="col">Material Title</th>
+                    <th scope="col">Free Copy Link</th>
+                    <th scope="col">Recommeded By (Matric Number) </th>
                     <th scope="col">Time</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><img src="https://via.placeholder.com/20/0000FF/FFFFFF?text=📤" alt="New material" class="activity-icon"> New material uploaded</td>
-                    <td>Mathematics</td>
-                    <td>John Doe</td>
-                    <td>2 min ago</td>
-                </tr>
-                <tr>
-                    <td><img src="https://via.placeholder.com/20/00FF00/FFFFFF?text=👤" alt="User registration" class="activity-icon"> User registration</td>
-                    <td>Chemistry</td>
-                    <td>Jane Smith</td>
-                    <td>15 min ago</td>
-                </tr>
-                <tr>
-                    <td><img src="https://via.placeholder.com/20/FF0000/FFFFFF?text=✅" alt="Processing complete" class="activity-icon"> Processing complete</td>
-                    <td>Physics</td>
-                    <td>Mike Johnson</td>
-                    <td>1 hour ago</td>
-                </tr>
+                {% for recommendation in recommendations if recommendation.status == 'pending_vectorization' %}
+                    <tr>
+                        <td>{{ recommendation.title }}</td>
+                        <td>{{ recommendation.link }}</td>
+                        <td>{{ recommendation.matric_number }}</td>
+                        <td>{{ recommendation.timestamp }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="mt-4">
-        <h3>Quick Actions</h3>
-        <div class="d-flex gap-3">
-            <button class="btn btn-purple">Run Vectorization</button>
-            <button class="btn btn-purple">Manage Users</button>
-            <button class="btn btn-purple">View Reports</button>
-        </div>
-    </div>
-</div>
-
+    
 {% endblock content %}
 
 

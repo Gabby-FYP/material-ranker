@@ -1,16 +1,26 @@
 {% extends "site/pages/user/base.html" %}
 
+{% block head  %}
+<link rel="stylesheet" href="/static/css/user_style.css">
+{% endblock head %}
+
 
 {% block content %}
 <!-- Main Content -->
 <div class="main-content">
-    <h2>Recommendation History</h2>
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Recommendation History</h2>
+        <button class="btn btn-purple text-light" data-bs-toggle="modal" data-bs-target="#recommendMaterialModal">Recommend A Material</button>
+    </div>
+
     <div class="table-container">
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Material Title</th>
                     <th>Timestamp</th>
+                    <th>Ratings</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -22,6 +32,8 @@
                     <td>
                         {% if recommendation.status == 'accepted' %}
                             <span class="text-success">Accepted</span>
+                        {% elif recommendation.status == 'pending' %}
+                            <span class="text-warning">Pending</span>
                         {% else %}
                             <span class="text-danger">Rejected</span>
                         {% endif %}
@@ -32,5 +44,62 @@
         </table>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="recommendMaterialModal" tabindex="-1" aria-labelledby="recommendMaterialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg for larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="recommendMaterialModalLabel">Recommend Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="recommendMaterialForm">
+                    <div class="mb-3">
+                        <label for="materialTitle" class="form-label">Material Title</label>
+                        <input type="text" class="form-control" id="materialTitle" placeholder="Enter the title of the educational material" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="authors" class="form-label">Authors</label>
+                        <input type="text" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="materialLink" class="form-label">Material Link</label>
+                        <input type="url" class="form-control" id="materialLink" placeholder="Paste URL to free copy" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="materialLabel" class="form-label">Material Label</label>
+                        <div class="d-flex gap-2">
+                            <!-- Multi-select dropdown for predefined labels -->
+                            <select class="form-control flex-grow-1" id="materialLabelSelect" multiple required>
+                                <option value="document">Document</option>
+                                <option value="video">Video</option>
+                                <option value="presentation">Presentation</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <!-- Text input for custom labels -->
+                            <input type="text" class="form-control flex-grow-1" id="materialLabelCustom" placeholder="Add custom label" required>
+                        </div>
+                        <small class="text-muted">Select one or more labels and/or enter a custom label. Hold Ctrl (or Cmd) to select multiple options.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="coverImage" class="form-label">Cover Image</label>
+                        <input type="file" class="form-control" id="coverImage" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" rows="4" placeholder="Provide a brief description of the material" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="recommendMaterialForm" class="btn btn-purple w-100 text-light">Submit Recommendation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock content %}

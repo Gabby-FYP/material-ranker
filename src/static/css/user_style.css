@@ -73,32 +73,27 @@ body {background-color: #f8f9fa;}
     background-color: #5a54e0;
 }
 
-.rating-container {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    margin: auto;
-}
-.star-rating input {
+.rating input[type="checkbox"] {
     display: none;
 }
-.star-rating label {
-    font-size: 30px;
-    color: #ccc;
+.rating label i {
+    color: #ccc; /* Gray for unselected stars */
+    font-size: 2rem;
     cursor: pointer;
+    transition: color 0.2s;
 }
-.star-rating input:checked ~ label,
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-    color: #f5c518;
+.rating label input[type="checkbox"]:checked + i {
+    color: #f90; /* Orange for selected stars */
 }
-.rating-labels {
+.rating {
     display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    margin-top: -10px;
+    justify-content: center;
+    gap: 10px;
+}.btn-purple {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a2d9e;
+    border-color: #5a2d9e;
 }

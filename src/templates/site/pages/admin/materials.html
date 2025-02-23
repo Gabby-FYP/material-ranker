@@ -7,13 +7,13 @@
 
 {% block content %}
 
- <!-- Main Content -->
- <div class="container mt-4">
+<!-- Main Content -->
+<div class="container mt-4">
 
     <!-- Search and Add Material -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="input-group w-50">
-            <input type="text" class="form-control" placeholder="Search materials..." aria-label="Search materials">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search materials..." aria-label="Search materials" onkeyup="filterMaterials()">
             <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
         </div>
         <button class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">Add Material</button>
@@ -23,14 +23,14 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">Material</th>
+                <th scope="col">Material Title</th>
                 <th scope="col">Size</th>
                 <th scope="col">Date</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr data-title="introduction to physics (pdf)">
                 <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Introduction to Physics (PDF)</td>
                 <td>2.5 MB</td>
                 <td>Oct 12, 2023</td>
@@ -38,16 +38,16 @@
                     <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
-            <tr>
-                <td><i class="bi bi-file-earmark-play material-icon" style="color: #00ff00;"></i> Chemistry Lab Tutorial (MP4)</td>
+            <tr data-title="chemistry lab tutorial (pdf)">
+                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Chemistry Lab Tutorial (PDF)</td>
                 <td>150 MB</td>
                 <td>Oct 11, 2023</td>
                 <td>
                     <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
-            <tr>
-                <td><i class="bi bi-file-earmark-ppt material-icon" style="color: #ff9900;"></i> Math Fundamentals (PPT)</td>
+            <tr data-title="math fundamentals (pdf)">
+                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Math Fundamentals (PDF)</td>
                 <td>5.8 MB</td>
                 <td>Oct 10, 2023</td>
                 <td>
@@ -56,7 +56,6 @@
             </tr>
         </tbody>
     </table>
-
 
 
 
@@ -83,8 +82,27 @@
                                 <input type="text" class="form-control" id="materialTitle" placeholder="Enter the title of your textbook or material" required>
                             </div>
                             <div class="mb-3">
-                                <label for="courseCode" class="form-label">Course Code</label>
-                                <input type="text" class="form-control" id="courseCode" placeholder="e.g., CS101, MATH201" required>
+                                <label for="authors" class="form-label">Authors</label>
+                                <input type="text" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialLabel" class="form-label">Material Label</label>
+                                <div class="d-flex gap-2">
+                                    <!-- Multi-select dropdown for predefined labels -->
+                                    <select class="form-control flex-grow-1" id="materialLabelSelect" multiple required>
+                                        <option value="document">Document</option>
+                                        <option value="video">Video</option>
+                                        <option value="presentation">Presentation</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    <!-- Text input for custom labels -->
+                                    <input type="text" class="form-control flex-grow-1" id="materialLabelCustom" placeholder="Add custom label" required>
+                                </div>
+                                <small class="text-muted">Select one or more labels and/or enter a custom label. Hold Ctrl (or Cmd) to select multiple options.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="coverImage" class="form-label">Cover Image</label>
+                                <input type="file" class="form-control" id="coverImage" accept="image/*" required>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
@@ -117,3 +135,20 @@
 {% endblock content %}
 
 
+{% block scripts %} 
+<script>
+    function filterMaterials() {
+        let searchQuery = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            let title = row.getAttribute("data-title");
+            if (title && title.includes(searchQuery)) {
+                row.style.display = "table-row"; // Show the row
+            } else {
+                row.style.display = "none"; // Hide the row
+            }
+        });
+    }
+</script>
+{% endblock scripts %}
