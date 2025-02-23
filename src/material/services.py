@@ -11,12 +11,13 @@ from src.core.dependecies import (
 from src.libs.exceptions import ServiceError
 from src.libs.utils import CeleryHelper
 from src.material.schemas import MaterailRecommendation
-from src.material.tfid.vertorizer import Vectorizer
+from src.material.tfid.vectorizer import Vectorizer, VectorizerNotFound
 from src.models import AdminUser, Material, MaterialRating, MaterialStatus, MaterialVector, User, UserMaterial
 from src.material.tasks import synchronize_documents_tasks
 from sqlalchemy.exc import SQLAlchemyError
 from src.libs.log import logger
 from sqlalchemy_file.exceptions import ContentTypeValidationError, SizeValidationError
+from src.core.config import settings
 
 
 def create_material_service(
@@ -42,7 +43,7 @@ def create_material_service(
             authors=author,
             content=content,
             cover_image=cover_image,
-            external_download_url=external_download_url,
+            external_download_url=str(external_download_url) if external_download_url else None,
             status=(
                 MaterialStatus.pending_vectorization 
                 if type(admin_or_user, AdminUser) else
@@ -103,26 +104,66 @@ def synchronize_service(
         )
 
 
+def _get_combined_score(
+    cosine_similarities: list[float],
+    normalized_user_ratings: list[float],
+) -> list[float]:
+    weight = settings.COSINE_SIMILARITY_WEIGHT
+
+    return [
+        weight * cos_sim + (1 - weight) * norm_rating 
+        for cos_sim, norm_rating in zip(cosine_similarities, normalized_user_ratings)
+    ]
+
+
 def material_search_service(
     session: Annotated[Session, Depends(require_db_session)],
+    admin_or_user: Annotated[
+        AdminUser | User,
+        Depends(require_admin_or_user_access)
+    ],
     search_query: Annotated[str, Query()],
     limit: Annotated[int, Query()] = 10,
 ) -> list[Material]:
-    """Perform TFIDF search."""
+    """Perform TFIDF search and reorder results based on combined score."""
+    
+    try:
+        search_indexes, cosine_similarity = Vectorizer().search(query=search_query, limit=limit)
+    except VectorizerNotFound as error:
+        raise ServiceError(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occured during search. Please reach out to admin to re-vectorize",
+        ) from error
 
-    search_indexes = Vectorizer().search(query=search_query, limit=limit)
-
-    if not search_indexes.any():
+    if not search_indexes:
         return []
 
-    # select vectorized materials
+    # Select vectorized materials
     materials = session.exec(
         select(Material).where(
             Material.status == MaterialStatus.vectorized
         ).order_by(col(Material.vector_id))
     ).all()
+    
+    initial_search_results = [materials[index] for index in search_indexes]
+    normalized_user_ratings = [
+        material.normalized_average_rating 
+        for material in initial_search_results
+    ]
 
-    search_results = [materials[index] for index in search_indexes]
+    combined_score = _get_combined_score(
+        cosine_similarities=cosine_similarity,
+        normalized_user_ratings=normalized_user_ratings
+    )
+    
+    # Re-arrange initial search result using combined score
+    sorted_results = sorted(
+        zip(initial_search_results, combined_score),
+        key=lambda x: x[1],  # Sort by combined_score (second element of each pair)
+        reverse=True         # Descending order (highest score first)
+    )
+
+    search_results = [material for material, _ in sorted_results]
     return search_results
 
 

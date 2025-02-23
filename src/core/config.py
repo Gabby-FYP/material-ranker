@@ -31,6 +31,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    COSINE_SIMILARITY_WEIGHT: float =  0.6
+
     BASE_DIR: str = os.path.dirname(os.path.dirname(__file__))
     API_V1_STR: str = "/api/v1"
     DOMAIN: str = '127.0.0.1'

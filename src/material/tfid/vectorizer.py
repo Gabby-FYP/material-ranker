@@ -74,9 +74,9 @@ class Vectorizer:
         kth_largest = (limit + 1) * -1
         return np.argsort(result)[:kth_largest:-1]
 
-    def search(self, query: str, limit: int = 10) -> NDArray:
+    def search(self, query: str, limit: int = 10) -> tuple[list[int], list[float]]:
         """Search for similar documents to the given query."""
-        
+
         try:
            vectorizer = self._load_vectorizer
            features = self._load_features
@@ -87,5 +87,5 @@ class Vectorizer:
         query_vector = vectorizer.transform([query])
         cosine_similarities = cosine_similarity(features, query_vector).flatten()
         search_result = self.sort_search_result(cosine_similarities, limit)
-        
-        return search_result
+        score = cosine_similarities[search_result]
+        return list(search_result), list(score)

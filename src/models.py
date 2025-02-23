@@ -108,7 +108,7 @@ class Material(SQLModel, table=True):
     title: str
     description: str
     authors: str
-    average_rating: int | None = Field(default=None, ge=1, le=5)
+    average_rating: float | None = Field(default=None, ge=1, le=5)
     external_download_url: str | None = Field(nullable=True)
     cover_image: File | None = Field(sa_column=Column(ImageField))
     content: File | None = Field(sa_column=Column(FileField(
@@ -131,6 +131,12 @@ class Material(SQLModel, table=True):
 
     class Config:
         arbitrary_types_allowed = True
+    
+    @property
+    def normalized_average_rating(self) -> float:
+        """Normalize average rating."""
+        rating = self.average_rating or 1.0
+        return (rating - 1) / 4
 
 
 class MaterialVector(SQLModel, table=True):
