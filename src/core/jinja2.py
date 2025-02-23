@@ -3,7 +3,7 @@ from fastapi import Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from src.core.config import settings
-from pprint import pprint
+
 
 templates = Jinja2Templates(directory=settings.TEMPLATE_DIR)
 
@@ -20,7 +20,6 @@ def render_template(
     headers = headers or {}
     headers.update(**dict(response.headers))
     context["request"] = request
-    pprint(context)
     return templates.TemplateResponse(
         template_name,
         context=context,

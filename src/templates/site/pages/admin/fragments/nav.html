@@ -1,74 +1,85 @@
-<li 
-    class="nav-item mb-2 fw-medium"
-    hx-get="/admin/dashboard/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2 {% if pageVariable.active_nav == 'DASHBOARD' %}active{% endif %}" href="/admin/dashboard">
+<li class="nav-item mb-2 fw-medium">
+    <a 
+        href="/admin/dashboard"
+        hx-get="/admin/dashboard/"
+        hx-push-url="/admin/dashboard"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2 {% if pageVariable.active_nav == 'DASHBOARD' %}active{% endif %}"
+    >
         <i class="bi bi-bounding-box text-dark mx-2"></i>
         Dashboard
     </a>
 </li>
-<li 
-    class="nav-item mb-2 fw-medium"
-    hx-get="/admin/recommendations/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2 {% if pageVariable.active_nav == 'RECOMMENDATION' %}active{% endif %}" href="/admin/reccommendation">
+<li class="nav-item mb-2 fw-medium">
+    <a 
+        href="/admin/reccommendation"
+        hx-get="/admin/reccommendation"
+        hx-push-url="/admin/reccommendation"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2 {% if pageVariable.active_nav == 'RECOMMENDATION' %}active{% endif %}" 
+    >
         <i class="bi bi-clipboard2-heart text-dark mx-2"></i>
         Recommendation
     </a>
 </li>
-<li 
-    class="nav-item mb-2 fw-medium"
-    hx-get="/admin/materials/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2 {% if pageVariable.active_nav == 'MATERIAL' %}active{% endif %}" href="/admin/materials/">
+<li class="nav-item mb-2 fw-medium">
+    <a 
+        href="/admin/materials"
+        hx-get="/admin/materials"
+        hx-push-url="/admin/materials"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2 {% if pageVariable.active_nav == 'MATERIAL' %}active{% endif %}" 
+    >
         <i class="bi bi-bookshelf text-dark mx-2"></i>
         Materials
     </a>
 </li>
 
 {% if user.is_superuser %}
-<li 
-    class="nav-item mb-2 fw-medium"
-    hx-get="/admin/users/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2 {% if pageVariable.active_nav == 'ADMIN_USERS' %}active{% endif %}" href="/admin/users">
+<li class="nav-item mb-2 fw-medium">
+    <a 
+        href="/admin/users"
+        hx-get="/admin/users"
+        hx-push-url="/admin/users"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2 {% if pageVariable.active_nav == 'ADMIN_USERS' %}active{% endif %}" 
+    >
         <i class="bi bi-people-fill text-dark mx-2"></i>
         Users
     </a>
 </li>
 {% endif %}
 
-<li 
-    class="nav-item mb-2 fw-medium d-flex d-sm-none"
-    hx-get="/admin/profile/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2 {% if pageVariable.active_nav == 'PROFILE' %}active{% endif %}" href="#">
+<li class="nav-item mb-2 fw-medium d-flex d-sm-none">
+    <a 
+        href="/admin/profile"
+        hx-get="/admin/profile"
+        hx-push-url="/admin/profile"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2 {% if pageVariable.active_nav == 'PROFILE' %}active{% endif %}" 
+    >
         <i class="bi bi-clipboard2-heart text-dark mx-2"></i>
         Profile
     </a>
 </li>
-<li class="nav-item mb-2 fw-medium"
-    hx-get="/admin/logout/"
-    hx-trigger="click"
-    hx-swap="innerHTML"
-    hx-target="body"
->
-    <a class="p-2" href="#">
+<li class="nav-item mb-2 fw-medium">
+    <a 
+        hx-get="/admin/logout/"
+        hx-trigger="click"
+        hx-swap="innerHTML"
+        hx-target="body"
+        class="p-2" 
+    >
         <i class="bi bi-box-arrow-left text-dark mx-2"></i>
         Logout
     </a>

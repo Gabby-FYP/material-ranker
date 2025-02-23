@@ -2,8 +2,19 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from src.admin.schemas import CreateAdminUserFormValidate
-from src.admin.services import admin_request_password_reset_service, admin_user_login_service, create_new_admin_users, delete_admin_user, get_all_admin_users
-from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_admin_user_session, require_superuser
+from src.admin.services import (
+    admin_request_password_reset_service, 
+    admin_user_login_service, 
+    create_new_admin_users, 
+    delete_admin_user, 
+    get_all_admin_users,
+)
+from src.core.dependecies import (
+    check_htmx_request, 
+    push_htmx_history, 
+    require_authenticated_admin_user_session, 
+    require_superuser,
+)
 from src.core.jinja2 import render_template
 from src.models import AdminUser
 from src.site.routes.schemas import PageVariable
@@ -250,7 +261,7 @@ def admin_dashboard(
 
 
 @router.get("/reccommendation/", response_class=HTMLResponse)
-def admin_recommendatio(
+def admin_recommendation(
     request: Request,
     response: Response,
     adminuser: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)]
