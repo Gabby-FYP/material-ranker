@@ -1,8 +1,7 @@
 from sqlmodel import Session, select, col, update, delete
 from src.models import Material, MaterialStatus
 from src.material.parsers.text import Parser as TextParser
-from src.material.tfid.vertorizer import Vectorizer
-from src.core.config import settings
+from src.material.tfid.vectorizer import Vectorizer
 import io
 
 
