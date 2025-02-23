@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from src.libs.utils import parse_html_form_field_error, parse_html_form_error, parse_html_toast_message
 from src.libs.exceptions import BadRequestError, ServiceError
+from sqlalchemy_file.storage import StorageManager
 
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
@@ -21,12 +22,18 @@ app = FastAPI(
 
 # mount static files
 app.mount("/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
+if settings.file_storage_container:
+    try:
+        StorageManager.add_storage(
+            settings.FILE_STORAGE_CONTAINER_NAME, settings.file_storage_container
+        )
+    except RuntimeError:
+        pass
 
 
 @app.exception_handler(RequestValidationError)
 def form_field_exception_handler(request: Request, exc: RequestValidationError):
     """Handle form error."""
-
     messages = [
         parse_html_form_field_error(
             error_level='error',

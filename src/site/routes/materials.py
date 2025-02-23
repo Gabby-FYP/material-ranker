@@ -49,6 +49,7 @@ def reccommendations_page(
         context={"user": user, "pageVariable": PageVariable(active_nav='RECOMMENDATION')},
     )
 
+
 @router.get(
     "/rate-materials/",
     response_class=HTMLResponse,

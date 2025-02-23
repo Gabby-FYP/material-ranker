@@ -30,4 +30,12 @@ dependencies = [
     "fastapi-sessions>=0.3.2",
     "cryptography>=44.0.1",
     "ipython>=8.32.0",
+    "sqlalchemy-file>=0.6.0",
+    "fasteners>=0.19",
+    "pillow>=11.1.0",
+    "pdfplumber>=0.11.5",
+    "spacy>=3.8.4",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.15.2",
+    "pip>=25.0.1",
 ]

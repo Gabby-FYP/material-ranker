@@ -3,7 +3,7 @@ FROM python:3.12-alpine
 WORKDIR /material_ranker/
 
 # Install OS dependecies bash
-RUN apk --no-cache add curl bash gcc python3-dev musl-dev linux-headers
+RUN apk --no-cache add curl bash gcc python3-dev musl-dev linux-headers g++
 
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
@@ -41,5 +41,8 @@ COPY ./database /material_ranker/database
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
+
+# Download spacy pipeline
+RUN python -m spacy download en_core_web_md
 
 CMD ["fastapi", "run", "--reload", "src/main.py"]

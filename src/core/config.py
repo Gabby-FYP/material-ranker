@@ -10,6 +10,9 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
+from libcloud.storage.base import Container
+from libcloud.storage.drivers.local import LocalStorageDriver
+from libcloud.storage.types import ContainerDoesNotExistError
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -28,6 +31,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    BASE_DIR: str = os.path.dirname(os.path.dirname(__file__))
     API_V1_STR: str = "/api/v1"
     DOMAIN: str = '127.0.0.1'
     PORT: str = '8000'
@@ -60,6 +64,18 @@ class Settings(BaseSettings):
 
     TEMPLATE_DIR: str
     STATIC_DIR: str
+    MODEL_DIR: str
+
+    FILE_STORAGE_CONTAINER_NAME: str = "upload"
+    MEDIA_FILE_MAX_SIZE: str = "50M"  # 50mb
+    MEDIA_MATERIAL_ALLOWED_CONTENT_TYPES: list[str] = ["application/pdf"]
+    MEDIA_IMAGE_ALLOWED_CONTENT_TYPES: list[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/bmp",
+        "image/tiff",
+    ]
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -109,6 +125,47 @@ class Settings(BaseSettings):
         if self.ENVIRONMENT == "local":
             return f"http://{self.DOMAIN}:{self.PORT}"
         return f"https://{self.DOMAIN}"
+
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def file_storage_container(self) -> Container | None:
+        """Get local file storage container."""
+
+        # ensure media files are stored outside of src folder
+        parent_directory = os.path.abspath(os.path.join(self.BASE_DIR, os.pardir))
+        base_storage_location = os.path.join(parent_directory, "media")
+        container_folder = os.path.join(
+            base_storage_location, self.FILE_STORAGE_CONTAINER_NAME
+        )
+
+        container = None
+        try:
+            os.makedirs(container_folder, 0o777, exist_ok=True)
+            container = LocalStorageDriver(  # type: ignore
+                base_storage_location
+            ).get_container(self.FILE_STORAGE_CONTAINER_NAME)
+        except ContainerDoesNotExistError:
+            warnings.warn(
+                f"`{self.FILE_STORAGE_CONTAINER_NAME}` media container not found.",
+                stacklevel=1,
+            )
+
+        return container
+
+    @model_validator(mode="after")
+    def _ensure_media_storage_container_is_configured(self) -> Self:
+        try:
+            assert self.file_storage_container is not None
+        except (NotImplementedError, AssertionError):
+            raise ValueError("File storage not configured.")
+
+        except AttributeError:
+            warnings.warn(
+                "`file_storage_container` property not available", stacklevel=1
+            )
+
+        return self
 
 
 settings = Settings()  # type: ignore

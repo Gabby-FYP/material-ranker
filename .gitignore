@@ -9,7 +9,11 @@ wheels/
 # Virtual environments
 .venv
 
-# database & logs
+# database, models, & logs
 *.sqlite3*
 *.log*
 *.logs*
+*.gz*
+
+# media
+*media

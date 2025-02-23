@@ -7,6 +7,7 @@ from src.core.config import settings
 from src.core.jinja2 import render_email_template
 from src.libs.schemas import EmailUserParams, HTMLEmailMessage
 from src.libs.mail import SMTPMailProvider
+from src.worker import celery_app
 
 
 def parse_html_form_field_error(
@@ -59,7 +60,6 @@ def parse_html_toast_message(
             <div class="toast-header">
               <span class="rounded me-2 {error_classes[error_level]} p-2"></span>
               <strong class="me-auto">{title}</strong>
-              <small class="text-body-secondary">11 mins ago</small>
               <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">{message}</div>
@@ -122,3 +122,24 @@ def send_html_mail(
             meta_data=kwargs.get("meta_data"),
         )
     )
+
+
+
+class CeleryHelper:
+    """Contains helper functionalities to be used while interacting with Celery."""
+    @staticmethod
+    def is_being_executed(task_name: str) -> bool:
+        """Returns whether the task with given task_name is already being executed.
+
+        Args:
+            task_name: Name of the task to check if it is running currently.
+        Returns: A boolean indicating whether the task with the given task name is
+            running currently.
+        """
+        active_tasks = celery_app.control.inspect().active()
+        for worker, running_tasks in active_tasks.items():
+            for task in running_tasks:
+                if task["name"] == task_name:
+                    return True
+
+        return False
