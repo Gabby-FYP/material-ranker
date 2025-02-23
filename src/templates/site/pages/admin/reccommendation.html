@@ -14,37 +14,38 @@
 
 <div class="container mt-4">
     <div class="card p-4">
-        <h2>Recent Activities</h2>
+        <h2 class="text-dark">Lists Of Pending Reviews</h2>
 
         <!-- Recent Activities Table -->
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">Activity</th>
-                    <th scope="col">Course</th>
-                    <th scope="col">User</th>
+                    <th scope="col">Material Title</th>
+                    <th scope="col">Free Copy Link</th>
+                    <th scope="col">Recommeded By (Matric Number) </th>
                     <th scope="col">Time</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><i class="bi bi-box-arrow-in-up activity-icon"></i> New material uploaded</td>
-                    <td>Mathematics</td>
-                    <td>John Doe</td>
-                    <td>2 min ago</td>
-                </tr>
-                <tr>
-                    <td><i class="bi bi-person-plus activity-icon"></i> User registration</td>
-                    <td>Chemistry</td>
-                    <td>Jane Smith</td>
-                    <td>15 min ago</td>
-                </tr>
-                <tr>
-                    <td><i class="bi bi-check-circle activity-icon"></i> Processing complete</td>
-                    <td>Physics</td>
-                    <td>Mike Johnson</td>
-                    <td>1 hour ago</td>
-                </tr>
+                {% for recommendation in recommendations %}
+                    <tr>
+                        <td>{{ recommendation.title }}</td>
+                        <td>{{ recommendation.link }}</td>
+                        <td>{{ recommendation.matric_number }}</td>
+                        <td>{{ recommendation.timestamp }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-success" data-recommendation-id="{{ recommendation.id }}" data-action="accept">
+                                    <i class="bi bi-check-lg"></i> Accept
+                                </button>
+                                <button class="btn btn-sm btn-danger" data-recommendation-id="{{ recommendation.id }}" data-action="reject">
+                                    <i class="bi bi-x-lg"></i> Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
