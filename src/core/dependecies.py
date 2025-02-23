@@ -39,7 +39,6 @@ def require_authenticated_user_session(
     return user
 
 
-
 def require_authenticated_admin_user_session(
     db_session: Annotated[Session, Depends(require_db_session)],
     session_id: Annotated[UUID, Depends(session_cookie)],
@@ -53,7 +52,7 @@ def require_authenticated_admin_user_session(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Unauthorized"
         )  
-    
+
     return user
 
 
@@ -68,6 +67,25 @@ def require_superuser(
         )  
 
     return user
+
+
+def require_admin_or_user_access(
+    db_session: Annotated[Session, Depends(require_db_session)],
+    session_id: Annotated[UUID, Depends(session_cookie)],
+    session_data: Annotated[SessionData, Depends(session_verifier)]
+) -> User | AdminUser:
+    """Require either authenticated admin or user."""
+
+    user = db_session.exec(select(User).where(User.id == session_data.id)).first()
+    admin = db_session.exec(select(AdminUser).where(AdminUser.id == session_data.id)).first()
+
+    if not user and not admin:
+        raise AuthenticationError(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Unauthorized"
+        )  
+
+    return user or admin
 
 
 def check_htmx_request(request: Request) -> bool:

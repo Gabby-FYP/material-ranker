@@ -48,3 +48,4 @@ def reccommendations_page(
         template_name="site/pages/user/reccommendations.html",
         context={"user": user, "pageVariable": PageVariable(active_nav='RECOMMENDATION')},
     )
+

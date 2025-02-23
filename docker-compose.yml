@@ -28,7 +28,9 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./src:/material_ranker/src
+      - ./media:/material_ranker/media
       - ./database:/material_ranker/database
+      - ./models:/material_ranker/models
       - ./logs:/material_ranker/logs
     env_file:
       - .env
@@ -77,7 +79,9 @@ services:
         condition: service_started
     volumes:
       - ./src:/material_ranker/src
+      - ./media:/material_ranker/media
       - ./database:/material_ranker/database
+      - ./models:/material_ranker/models
       - ./logs:/material_ranker/logs
     env_file:
       - .env
