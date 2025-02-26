@@ -41,16 +41,56 @@ def reccommendations_page(
     request: Request,
     response: Response,
     is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    user: Annotated[User, Depends(require_authenticated_user_session)]
+    user: Annotated[User, Depends(require_authenticated_user_session)],
+    user_recommedations:  Annotated[list[MaterailRecommendation], Depends(user_material_recommendation_list)]
 ) -> HTMLResponse:
     """Render recommendation_history page."""
     return render_template(
         request=request,
         response=response,
         template_name="site/pages/user/reccommendations.html",
-        context={"user": user, "pageVariable": PageVariable(active_nav='RECOMMENDATION')},
+        context={
+            "user": user, 
+            'recommendations': user_recommedations,
+            "pageVariable": PageVariable(active_nav='RECOMMENDATION'),
+        },
     )
 
+
+@router.post("/reccommendation/", response_class=HTMLResponse) 
+def create_a_material_recommendation(
+    request: Request,
+    response:  Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[User, Depends(require_authenticated_user_session)],
+    new_recommendation:  Annotated[Material, Depends(create_material_service)],
+    user_recommedations:  Annotated[list[MaterailRecommendation], Depends(user_material_recommendation_list)]
+) -> HTMLResponse:
+    """Submit a material recommendation."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Redirect': '/materials/reccommendation/'},
+            template_name="site/pages/user/reccommendations.html",
+            context={
+                'user': user,
+                'recommendations': user_recommedations, 
+                'pageVariable': PageVariable(active_nav='RECOMMENDATION')
+            }
+        )  
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/user/reccommendations.html",
+        context={
+            "user": user,
+            'recommendations': user_recommedations, 
+            "pageVariable": PageVariable(active_nav='RECOMMENDATION')
+        },
+    )
+ 
 
 @router.get(
     "/rate-materials/",
@@ -70,15 +110,4 @@ def rate_materials_page(
         template_name="site/pages/user/rate_material.html",
         context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
     )
-
-
-@router.post("/add-materials/", response_class=HTMLResponse) 
-def add_new_materials(
-    request: Request,
-    response:  Response,
-    is_htmx: Annotated[bool, Depends(check_htmx_request)],
-    new_material:  Annotated[Material, Depends(create_material_service)],
-    list_material:  Annotated[list[MaterailRecommendation], Depends(user_material_recommendation_list)]
-) -> HTMLResponse:
-    """A user adding a new material and  a user getting to see his recommendation"""
 
