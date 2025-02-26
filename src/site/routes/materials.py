@@ -2,10 +2,12 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import HTMLResponse
 
-from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_user_session
+from src.core.dependecies import check_htmx_request, push_htmx_history, require_admin_or_user_access, require_authenticated_user_session
 from src.core.jinja2 import render_template
-from src.models import User
+from src.models import Material, User
 from src.site.routes.schemas import PageVariable
+from src.material.schemas import MaterailRecommendation
+from src.material.services import create_material_service, user_material_recommendation_list
 
 
 router = APIRouter()
@@ -68,3 +70,15 @@ def rate_materials_page(
         template_name="site/pages/user/rate_material.html",
         context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
     )
+
+
+@router.post("/add-materials/", response_class=HTMLResponse) 
+def add_new_materials(
+    request: Request,
+    response:  Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    new_material:  Annotated[Material, Depends(create_material_service)],
+    list_material:  Annotated[list[MaterailRecommendation], Depends(user_material_recommendation_list)]
+) -> HTMLResponse:
+    """A user adding a new material and  a user getting to see his recommendation"""
+

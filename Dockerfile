@@ -1,7 +1,6 @@
 FROM python:3.12-alpine
 
 WORKDIR /material_ranker/
-
 # Install OS dependecies bash
 RUN apk --no-cache add curl bash gcc python3-dev musl-dev linux-headers g++
 
@@ -43,6 +42,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
 # Download spacy pipeline
-RUN python -m spacy download en_core_web_md
+RUN python -m spacy download en_core_web_sm
 
 CMD ["fastapi", "run", "--reload", "src/main.py"]

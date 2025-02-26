@@ -46,7 +46,7 @@ def create_material_service(
             external_download_url=str(external_download_url) if external_download_url else None,
             status=(
                 MaterialStatus.pending_vectorization 
-                if type(admin_or_user, AdminUser) else
+                if isinstance(admin_or_user, AdminUser) else
                 MaterialStatus.pending_approval 
             ),
             vector=vector,
@@ -55,7 +55,7 @@ def create_material_service(
         to_create = [vector, material]
 
         # if material is created by user, create recommendation model
-        if type(admin_or_user, User):
+        if isinstance(admin_or_user, User):
             recommendation = UserMaterial(
                 user=admin_or_user,
                 material=material,
@@ -205,7 +205,7 @@ def material_recommendation_list_service(
 ) -> list[MaterailRecommendation]:
     """list recommended materials."""
     user_recommendations = session.exec(
-        select(UserMaterial).join_from(
+        select(UserMaterial).join(
             Material,
             UserMaterial.material_id == Material.id,
         ).where(
@@ -233,7 +233,7 @@ def user_material_recommendation_list(
     """List materials recommended by a specific user."""
 
     user_recommendations = session.exec(
-        select(UserMaterial).join_from(
+        select(UserMaterial).join(
             Material,
             UserMaterial.material_id == Material.id,
         ).where(
@@ -253,7 +253,7 @@ def user_material_recommendation_list(
             status=recommendation_status[recommendation.material.status],
             material_id=recommendation.material_id,
             material_title=recommendation.material.title,
-            recommender_matric_no=recommendation.user.matric_number,
+            recommender_matric_no=str(recommendation.user.matric_number),
             recommendation_datetime=recommendation.material.created_datetime,
             external_download_link=recommendation.material.external_download_url,
         )

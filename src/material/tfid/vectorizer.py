@@ -20,7 +20,7 @@ class Vectorizer:
     UNWANTED_PIPES = ["ner", "parser"]
 
     def __init__(self):
-        self.nlp = spacy.load('en_core_web_md')
+        self.nlp = spacy.load('en_core_web_sm')
 
     def _tokenizer(self, doc) -> list:
         with self.nlp.disable_pipes(*self.UNWANTED_PIPES):
