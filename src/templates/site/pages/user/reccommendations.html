@@ -55,28 +55,36 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="recommendMaterialForm">
+                <form 
+                id="recommendMaterialForm"
+                hx-post="/materials/add-materials/"
+                hx-trigger="submit"
+                hx-target-400="#form-error"
+                hx-swap="innerHTML"
+                hx-encoding='multipart/form-data'
+                >
                     <div class="mb-3">
                         <label for="materialTitle" class="form-label">Material Title</label>
-                        <input type="text" class="form-control" id="materialTitle" placeholder="Enter the title of the educational material" required>
+                        <input type="text" name="title" class="form-control" id="materialTitle" placeholder="Enter the title of the educational material" required>
                     </div>
                     <div class="mb-3">
                         <label for="authors" class="form-label">Authors</label>
-                        <input type="text" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
+                        <input type="text" name="author" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
                     </div>
                     <div class="mb-3">
                         <label for="materialLink" class="form-label">Material Link</label>
-                        <input type="url" class="form-control" id="materialLink" placeholder="Paste URL to free copy" required>
+                        <input type="url" name="external_download_link" class="form-control" id="materialLink" placeholder="Paste URL to free copy" required>
                     </div>
                     <div class="mb-3">
                         <label for="materialLabel" class="form-label">Material Label</label>
                         <div class="d-flex gap-2">
                             <!-- Multi-select dropdown for predefined labels -->
                             <select class="form-control flex-grow-1" id="materialLabelSelect" multiple required>
-                                <option value="document">Document</option>
-                                <option value="video">Video</option>
-                                <option value="presentation">Presentation</option>
-                                <option value="other">Other</option>
+                                <option value="document">Statistics</option>
+                                <option value="video">Software Engineering</option>
+                                <option value="presentation">Logic Gate</option>
+                                <option value="other">Design Principles</option>
+                                <option value="other">Algorithm</option>
                             </select>
                             <!-- Text input for custom labels -->
                             <input type="text" class="form-control flex-grow-1" id="materialLabelCustom" placeholder="Add custom label" required>
@@ -85,11 +93,23 @@
                     </div>
                     <div class="mb-3">
                         <label for="coverImage" class="form-label">Cover Image</label>
-                        <input type="file" class="form-control" id="coverImage" accept="image/*" required>
+                        <input type="file" name="cover_image" class="form-control" id="coverImage" accept="image/*" required>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" rows="4" placeholder="Provide a brief description of the material" required></textarea>
+                        <textarea class="form-control" name="description" id="description" rows="4" placeholder="Provide a brief description of the material" required></textarea>
+                    </div>
+                    <div class="card p-4 text-dark" style="background-color: #f1e8ff; border: none; border-radius: 10px;">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-upload fs-3 me-2" style="color: #6f42c1;"></i>
+                            <h4>Upload File</h4>
+                        </div>
+                        <p class="text-muted">/materials/reccommendation/Supported formats: PDF only (max 50MB)</p>
+
+                        <div class="mb-3">
+                            <input type="file" name="content" class="form-control" id="fileUpload" accept=".pdf,.docx" required>
+                            <small class="text-muted">Drag & Drop or <a href="#" class="text-decoration-none">Choose File</a></small>
+                        </div>
                     </div>
                 </form>
             </div>

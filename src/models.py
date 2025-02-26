@@ -140,5 +140,7 @@ class Material(SQLModel, table=True):
 
 
 class MaterialVector(SQLModel, table=True):
-    """Model representing a material vector id."""
+    """Model representing a m
+    
+    aterial vector id."""
     id: int | None = Field(default=None, primary_key=True)
