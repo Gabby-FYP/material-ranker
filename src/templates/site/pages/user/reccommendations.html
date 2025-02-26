@@ -20,15 +20,14 @@
                 <tr>
                     <th>Material Title</th>
                     <th>Timestamp</th>
-                    <th>Ratings</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for recommendation in recommendations %}
                 <tr>
-                    <td>{{ recommendation.title }}</td>
-                    <td>{{ recommendation.timestamp }}</td>
+                    <td>{{ recommendation.material_title }}</td>
+                    <td>{{ recommendation.recommendation_datetime }}</td>
                     <td>
                         {% if recommendation.status == 'accepted' %}
                             <span class="text-success">Accepted</span>
@@ -56,12 +55,12 @@
             </div>
             <div class="modal-body">
                 <form 
-                id="recommendMaterialForm"
-                hx-post="/materials/add-materials/"
-                hx-trigger="submit"
-                hx-target-400="#form-error"
-                hx-swap="innerHTML"
-                hx-encoding='multipart/form-data'
+                    id="recommendMaterialForm"
+                    hx-post="/materials/reccommendation/"
+                    hx-trigger="submit"
+                    hx-target-400="#form-error"
+                    hx-swap="innerHTML"
+                    hx-encoding='multipart/form-data'
                 >
                     <div class="mb-3">
                         <label for="materialTitle" class="form-label">Material Title</label>
@@ -87,7 +86,7 @@
                                 <option value="other">Algorithm</option>
                             </select>
                             <!-- Text input for custom labels -->
-                            <input type="text" class="form-control flex-grow-1" id="materialLabelCustom" placeholder="Add custom label" required>
+                            <input type="text" class="form-control flex-grow-1" id="materialLabelCustom" placeholder="Add custom label" />
                         </div>
                         <small class="text-muted">Select one or more labels and/or enter a custom label. Hold Ctrl (or Cmd) to select multiple options.</small>
                     </div>
@@ -114,8 +113,10 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="recommendMaterialForm" class="btn btn-purple w-100 text-light">Submit Recommendation</button>
+                <div class="w-100 d-flex justify-content-between">
+                    <button type="submit" form="recommendMaterialForm" class="btn btn-purple text-light col-5">Submit Recommendation</button>
+                    <button type="button" class="btn btn-outline-secondary col-5" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
