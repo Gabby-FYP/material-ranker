@@ -168,13 +168,19 @@ def material_search_service(
 
 
 def material_list_service(
-    session: Annotated[Session, Depends(require_db_session)],    
+    session: Annotated[Session, Depends(require_db_session)],
+    admin: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
 ) -> list[Material]:
     """List all materials on the platform."""
     
     return session.exec(
         select(Material).where(
-            Material.status == MaterialStatus.vectorized
+            col(Material.status).in_(
+                [
+                    MaterialStatus.vectorized, 
+                    MaterialStatus.pending_vectorization,
+                ]
+            )
         ).order_by(col(Material.vector_id))
     ).all()
 
@@ -218,7 +224,7 @@ def material_recommendation_list_service(
             status='pending',
             material_id=recommendation.material_id,
             material_title=recommendation.material.title,
-            recommender_matric_no=recommendation.user.matric_number,
+            recommender_matric_no=str(recommendation.user.matric_number),
             recommendation_datetime=recommendation.material.created_datetime,
             external_download_link=recommendation.material.external_download_url,
         )

@@ -15,8 +15,10 @@ from src.core.dependecies import (
     require_authenticated_admin_user_session, 
     require_superuser,
 )
+from src.material.schemas import MaterailRecommendation
+from src.material.services import create_material_service, material_list_service, material_recommendation_list_service, user_material_recommendation_list
 from src.core.jinja2 import render_template
-from src.models import AdminUser
+from src.models import AdminUser, Material
 from src.site.routes.schemas import PageVariable
 
 
@@ -249,14 +251,19 @@ def delete_admin_user_form(
 def admin_dashboard(
     request: Request,
     response: Response,
-    adminuser: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)]
+    adminuser: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
+    materials:  Annotated[list[Material], Depends(material_list_service)],
 ) -> HTMLResponse:
     """Render the admin material page"""
     return render_template(
         request=request,
         response=response,
         template_name="site/pages/admin/materials.html",
-        context={"user": adminuser, 'pageVariable': PageVariable(active_nav='MATERIAL')},
+        context={
+            "user": adminuser,
+            'materials': materials,
+            'pageVariable': PageVariable(active_nav='MATERIAL')
+        },
     )
 
 
@@ -272,4 +279,39 @@ def admin_recommendation(
         response=response,
         template_name="site/pages/admin/reccommendation.html",
         context={"user": adminuser, 'pageVariable': PageVariable(active_nav='RECOMMENDATION')},
+    )
+
+
+@router.post("/reccommendation/", response_class=HTMLResponse) 
+def add_a_material(
+    request: Request,
+    response:  Response,
+    is_htmx: Annotated[bool, Depends(check_htmx_request)],
+    user: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
+    new_recommendation:  Annotated[Material, Depends(create_material_service)],
+    materials:  Annotated[list[Material], Depends(material_list_service)]
+) -> HTMLResponse:
+    """Submit a material recommendation."""
+    if is_htmx:
+        return render_template(
+            request=request,
+            response=response,
+            headers={'HX-Retarget': 'body', 'HX-Redirect': '/admin/materials/'},
+            template_name="site/pages/admin/materials.html",
+            context={
+                'user': user,
+                'materials': materials,
+                'pageVariable': PageVariable(active_nav='MATERIAL')
+            }
+        )  
+
+    return render_template(
+        request=request,
+        response=response,
+        template_name="site/pages/admin/materials.html",
+        context={
+            "user": user,
+            'materials': materials,
+            'pageVariable': PageVariable(active_nav='MATERIAL')
+        },
     )
