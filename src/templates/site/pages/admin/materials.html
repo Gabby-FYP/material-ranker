@@ -26,34 +26,38 @@
                 <th scope="col">Material Title</th>
                 <th scope="col">Size</th>
                 <th scope="col">Date</th>
+                <th scope="col">Status</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr data-title="introduction to physics (pdf)">
-                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Introduction to Physics (PDF)</td>
-                <td>2.5 MB</td>
-                <td>Oct 12, 2023</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                </td>
-            </tr>
-            <tr data-title="chemistry lab tutorial (pdf)">
-                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Chemistry Lab Tutorial (PDF)</td>
-                <td>150 MB</td>
-                <td>Oct 11, 2023</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                </td>
-            </tr>
-            <tr data-title="math fundamentals (pdf)">
-                <td><i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> Math Fundamentals (PDF)</td>
-                <td>5.8 MB</td>
-                <td>Oct 10, 2023</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                </td>
-            </tr>
+            {% for material in materials %}
+                <tr data-title="{{ material.title|lower }} (pdf)">
+                    <td>
+                        <i class="bi bi-file-earmark-pdf material-icon" style="color: #ff0000;"></i> 
+                        {{ material.title }} (PDF)
+                    </td>
+                    <td>{{ material.size }}</td>
+                    <td>{{ material.date }}</td>
+                    <td>
+                        {% if material.status == 'pending_vectorization' %}
+                            <span class="badge bg-warning text-dark">Pending Vectorization</span>
+                        {% elif material.status == 'vectorized' %}
+                            <span class="badge bg-success">Vectorized</span>
+                        {% elif material.status == 'to_be_removed' %}
+                            <span class="badge bg-danger">To Be Removed</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Unknown</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" 
+                                onclick="deleteMaterial('{{ material.id }}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 
@@ -68,22 +72,29 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="uploadMaterialForm">
+                    <form 
+                    id="uploadMaterialForm"
+                    hx-post="/admin/reccommendation/"
+                    hx-trigger="submit"
+                    hx-target-400="#form-error"
+                    hx-swap="innerHTML"
+                    hx-encoding='multipart/form-data'
+                    >
                         <!-- Material Details Section -->
                         <div class="card p-4 mb-4 text-dark" style="background-color: #f1e8ff; border: none; border-radius: 10px;">
                             <div class="d-flex align-items-center mb-3">
                                 <i class="bi bi-file-earmark-text fs-3 me-2" style="color: #6f42c1;"></i>
                                 <h4>Material Details</h4>
                             </div>
-                            <p class="text-muted">Fill in the details about your course material. The document will be processed automatically after upload.</p>
+                            <p class="text-muted">Fill in the details about the course material. The document will be processed automatically after upload.</p>
     
                             <div class="mb-3">
                                 <label for="materialTitle" class="form-label">Material Title</label>
-                                <input type="text" class="form-control" id="materialTitle" placeholder="Enter the title of your textbook or material" required>
+                                <input type="text" name= "title" class="form-control" id="materialTitle" placeholder="Enter the title of your textbook or material" required>
                             </div>
                             <div class="mb-3">
                                 <label for="authors" class="form-label">Authors</label>
-                                <input type="text" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
+                                <input type="text" name="author" class="form-control" id="authors" placeholder="Enter author names, separated by commas" required>
                             </div>
                             <div class="mb-3">
                                 <label for="materialLabel" class="form-label">Material Label</label>
@@ -102,11 +113,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="coverImage" class="form-label">Cover Image</label>
-                                <input type="file" class="form-control" id="coverImage" accept="image/*" required>
+                                <input type="file" name="cover_image" class="form-control" id="coverImage" accept="image/*" required>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" rows="4" placeholder="Briefly describe the material content" required></textarea>
+                                <textarea  name="description" class="form-control" id="description" rows="4" placeholder="Briefly describe the material content" required></textarea>
                             </div>
                         </div>
     
@@ -119,7 +130,7 @@
                             <p class="text-muted">Supported formats: PDF only (max 50MB)</p>
     
                             <div class="mb-3">
-                                <input type="file" class="form-control" id="fileUpload" accept=".pdf,.docx" required>
+                                <input name="content" type="file" class="form-control" id="fileUpload" accept=".pdf,.docx" required>
                                 <small class="text-muted">Drag & Drop or <a href="#" class="text-decoration-none">Choose File</a></small>
                             </div>
                         </div>
@@ -137,6 +148,15 @@
 
 {% block scripts %} 
 <script>
+    
+        function deleteMaterial(materialId) {
+            if (confirm('Are you sure you want to delete this material?')) {
+                // Add your delete logic here, e.g., an AJAX call
+                console.log('Deleting material with ID: ' + materialId);
+                // Example: window.location.href = '/delete/' + materialId;
+            }
+        }
+    
     function filterMaterials() {
         let searchQuery = document.getElementById("searchInput").value.toLowerCase();
         let rows = document.querySelectorAll("tbody tr");
