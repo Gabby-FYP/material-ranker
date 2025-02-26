@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Recommendation Approved</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: hwb(210 97% 2%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .notification-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .notification-container img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+        }
+        .notification-container h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #28a745;
+        }
+        .notification-container p {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        .btn-primary {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+        }
+        .btn-primary:hover {
+            background-color: #5a54d9;
+            border-color: #5a54d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-container">
+        <img src="{{ SERVER_HOST }}/static/imgs/approved_image.png" alt="Approval Image">
+        <h1>Material Approved!</h1>
+        <p>Your recommended material "<strong>{{ material_title }}</strong>" has been approved by our admins.</p>
+        <p>It’s now available for other users to view and rate. Thank you for your contribution!</p>
+        <a href="{{ SERVER_HOST }}/materials/{{ material_id }}" class="btn btn-primary w-100 mt-3">View Material</a>
+        <p class="form-text mt-3">If you have any questions, feel free to contact us.</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

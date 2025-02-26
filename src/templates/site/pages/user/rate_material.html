@@ -7,32 +7,33 @@
 
     <div class="content d-flex justify-content-center align-items-center">
         <div class="rating-container">
-            <h1>Rate This Material</h1>
+            <h1>{{ material_title }}</h1>
+            
+            <div class="material-label">
+                {{ material_label }}
+            </div>
+
+            <p>{{ material_description }}</p>
+
+            <h3>Rate This Material</h3>
             <p>How helpful has this material been to you?</p>
-            <form>
+            
+            <form method="POST" action="/submit_rating">
                 <div class="rating">
-                    <label>
-                        <input type="checkbox" value="1">
-                        <i class="fa fa-star"></i>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="2">
-                        <i class="fa fa-star"></i>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="3">
-                        <i class="fa fa-star"></i>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="4">
-                        <i class="fa fa-star"></i>
-                    </label>
-                    <label>
-                        <input type="checkbox" value="5">
-                        <i class="fa fa-star"></i>
-                    </label>
+                    <input type="radio" id="star5" name="rating" value="5">
+                    <label for="star5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star1" name="rating" value="1" required>
+                    <label for="star1"><i class="fas fa-star"></i></label>
                 </div>
-                <input type="hidden" name="rating" id="rating-value" value="1">
+                
+                <input type="hidden" name="material_id" value="{{ material_id }}">
+                
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary">Submit Rating</button>
                 </div>
@@ -42,6 +43,19 @@
 {% endblock content %}
 
 {% block scripts %} 
-   
+
+const ratingInputs = document.querySelectorAll('.rating input');
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                ratingInputs.forEach(inp => {
+                    const label = inp.nextElementSibling;
+                    if (inp.value <= this.value) {
+                        label.style.color = '#ffd700';
+                    } else {
+                        label.style.color = '#ddd';
+                    }
+                });
+            });
+        });   
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock scripts %}
