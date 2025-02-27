@@ -14,64 +14,108 @@
         <div class="col-md-3 col-sm-6">
             <div class="card card-stats">
                 <h5>Total Users  </h5>
-                <p>1,234</p>
+                <p>{{dashboardData.user_count}}</p>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="card card-stats">
                 <h5>Total Materials</h5>
-                <p>436</p>
+                <p>{{dashboardData.material_count}}</p>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="card card-stats">
                 <h5>Total Pending Reviews</h5>
-                <p>3</p>
+                <p>{{dashboardData.pending_review_count}}</p>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="card card-stats">
-                <h5>Unvectorized Materials</h5>
-                <p>3</p>
+                <h5>Pending Vectorization</h5>
+                <p>{{dashboardData.pending_unvectorization_count}}</p>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="mt-4 mb-4">
+    <div class="my-5">
         <h3>Quick Actions</h3>
-        <div class="d-flex gap-3">
-            <button class="btn btn-purple">Run Vectorization</button>
-            <button class="btn btn-purple">View Pending Reviews</button>
+        <div class="d-flex gap-3 my-4">
+            <button
+                hx-post="/admin/materials/synchronize/"
+                hx-trigger="click"
+                class="btn btn-purple"
+            >Run Vectorization
+            <span
+                role="status" 
+                aria-hidden="true"
+                class="htmx-indicator spinner-border spinner-border-sm" 
+            ></span>
+            </button>
+            <button
+                hx-get="/admin/reccommendation"
+                hx-push-url="/admin/reccommendation"
+                hx-trigger="click"
+                hx-swap="innerHTML"
+                hx-target="body"
+                class="btn btn-purple"
+            >View Pending Reviews</button>
         </div>
     </div>
-</div>    
-    
+
     <!-- Recent Activities Table -->
     <div class="card p-4">
-        <h3 class="text-dark">List Of Unvectorized Materials</h3>
-        <table class="table table-striped">
+        <h3 class="text-dark my-3">Materials pending vectorization</h3>
+        <table class="table table-striped mt-3">
             <thead>
                 <tr>
                     <th scope="col">Material Title</th>
-                    <th scope="col">Free Copy Link</th>
-                    <th scope="col">Recommeded By (Matric Number) </th>
-                    <th scope="col">Time</th>
+                    <th scope="col">status</th>
+                    <th scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
-                {% for recommendation in recommendations if recommendation.status == 'pending_vectorization' %}
+                {% for material in materialsPendingVectorization %}
                     <tr>
-                        <td>{{ recommendation.title }}</td>
-                        <td>{{ recommendation.link }}</td>
-                        <td>{{ recommendation.matric_number }}</td>
-                        <td>{{ recommendation.timestamp }}</td>
+                        <td>{{ material.title }}</td>
+                        <td>
+                            {% if material.status == 'pending_vectorization' %}
+                            <span 
+                                type="button"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Material has not been vectorized and will not show up in search results"
+                                class="badge bg-warning text-dark"
+                            >Pending Vectorization
+                            </span>
+                            {% elif material.status == 'vectorized' %}
+                                <span
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="left"
+                                    data-bs-title="Material is vectorized and will appear in search results" 
+                                    class="badge bg-success"
+                                >
+                                    Vectorized
+                                </span>
+                            {% elif material.status == 'removed' %}
+                                <span 
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="left"
+                                    data-bs-title="Material is scheduled for removal and will be deleted on the next vectorization" 
+                                    class="badge bg-dark"
+                                >To Be Removed</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Unknown</span>
+                            {% endif %}
+                        </td>    
+                        <td>{{ material.updated_datetime.date() }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    </div>    
 
+</div>    
     
 {% endblock content %}
 

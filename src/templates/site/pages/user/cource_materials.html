@@ -20,19 +20,20 @@
 
     <!-- Course Grid -->
     <div class="course-grid" id="courseGrid">
-        {% for course in courses %}
+        {% for material in materials %}
             <div class="course-card" 
                  hx-get="/materials/rate-materials/" 
                  hx-trigger="click" 
                  hx-swap="innerHTML" 
                  hx-target="body" 
-                 data-level="{{ course.level }}" 
-                 data-title="{{ course.title }}"
-                 onclick="viewCourse('{{ course.title }}')">
-                <img src="{{ course.cover_image }}" alt="{{ course.title }} Cover Image">
-                <h5>{{ course.title }}</h5>
-                <p>Rated by {{ course.rating_count }} people</p>
-                <span class="badge bg-success">{{ course.rating }} ★</span>
+                 data-title="{{ material.title }}"
+                 onclick="viewCourse('{{ material.title }}')">
+                <img 
+                    src="{{ material.cover_image.url }}" 
+                    alt="{{ material.title }} Cover Image" />
+                <h5>{{ material.title }}</h5>
+                <p>Rated by {{ material.rating_count() }} people</p>
+                <span class="badge bg-success">{{ material.normalized_average_rating or 1.0 }} ★</span>
             </div>
         {% endfor %}
     </div>

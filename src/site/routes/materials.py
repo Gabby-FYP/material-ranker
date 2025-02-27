@@ -7,7 +7,7 @@ from src.core.jinja2 import render_template
 from src.models import Material, User
 from src.site.routes.schemas import PageVariable
 from src.material.schemas import MaterailRecommendation
-from src.material.services import create_material_service, user_material_recommendation_list
+from src.material.services import create_material_service, user_material_list_service, user_material_recommendation_list
 
 
 router = APIRouter()
@@ -21,14 +21,19 @@ router = APIRouter()
 def cource_materials(
     request: Request,
     response: Response,
-    user: Annotated[User, Depends(require_authenticated_user_session)]
+    user: Annotated[User, Depends(require_authenticated_user_session)],
+    materials: Annotated[list[Material], Depends(user_material_list_service)],
 ) -> HTMLResponse:
     """Render list cource materials page."""
     return render_template(
         request=request,
         response=response,
         template_name="site/pages/user/cource_materials.html",
-        context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
+        context={
+            "user": user, 
+            "materials": materials,
+            "pageVariable": PageVariable(active_nav='DASHBOARD')
+        },
     )
 
 
