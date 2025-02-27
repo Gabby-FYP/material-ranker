@@ -12,3 +12,9 @@ class MaterailRecommendation(BaseModel):
     recommender_matric_no: str
     recommendation_datetime: datetime
     
+
+class AdminDashboardDetails(BaseModel):
+    user_count: int
+    material_count: int
+    pending_review_count: int
+    pending_unvectorization_count: int

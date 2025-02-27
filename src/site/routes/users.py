@@ -1,9 +1,16 @@
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Request, Response, Depends, Form
-from src.core.dependecies import check_htmx_request, push_htmx_history, require_authenticated_user_session
+from sqlmodel import Session
+from src.core.dependecies import (
+    check_htmx_request, 
+    push_htmx_history, 
+    require_authenticated_user_session,
+    require_db_session,
+)
 from src.core.jinja2 import render_template
 from typing import Annotated
+from src.material.services import user_material_list_service
 from src.models import User
 from src.users.services import (
     change_user_password_service, 
@@ -144,17 +151,27 @@ def user_login_page(
 def user_login_form(
     request: Request,
     response: Response,
+    session: Annotated[Session, Depends(require_db_session)],
     is_htmx: Annotated[bool, Depends(check_htmx_request)],
     user: Annotated[User, Depends(user_login_service)],
 ) -> HTMLResponse:
     """Process user login form."""
     if is_htmx:
+        materials = user_material_list_service(
+            session=session,
+            user=user,
+        )
+
         return render_template(
             request=request, 
             response=response,
             headers={'HX-Retarget': 'body', 'HX-Push-Url': '/materials/', 'HX-Redirect': '/materials/'},
             template_name="site/pages/user/cource_materials.html",
-            context={"user": user, "pageVariable": PageVariable(active_nav='DASHBOARD')},
+            context={
+                "user": user,
+                "materials": materials, 
+                "pageVariable": PageVariable(active_nav='DASHBOARD')
+            },
         )
 
     return RedirectResponse(url="/materials/")

@@ -14,7 +14,7 @@
 
 <div class="container mt-4">
     <div class="card p-4">
-        <h2 class="text-dark">Lists Of Pending Reviews</h2>
+        <h3 class="text-dark mb-4">Material Recommendations</h3>
 
         <!-- Recent Activities Table -->
         <table class="table table-hover">
@@ -30,17 +30,50 @@
             <tbody>
                 {% for recommendation in recommendations %}
                     <tr>
-                        <td>{{ recommendation.title }}</td>
-                        <td>{{ recommendation.link }}</td>
-                        <td>{{ recommendation.matric_number }}</td>
-                        <td>{{ recommendation.timestamp }}</td>
+                        <td>{{ recommendation.material_title }}</td>
                         <td>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-success" data-recommendation-id="{{ recommendation.id }}" data-action="accept">
-                                    <i class="bi bi-check-lg"></i> Accept
+                            {% if recommendation.external_download_link %}
+                            <a href="{{ recommendation.external_download_link }}">
+                                Download Link
+                            </a>
+                            {% else %}
+                            Unavailable
+                            {% endif %}
+                        </td>
+                        <td>{{ recommendation.recommender_matric_no }}</td>
+                        <td>{{ recommendation.recommendation_datetime.date() }}</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <button
+                                    hx-post="/admin/reccommendation/{{recommendation.material_id}}/accept" 
+                                    hx-confirm="Are you sure?"
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    data-bs-title="Accept material recommendation"
+                                    data-swal-text="
+                                    This action will result in the admition of the material into the database. 
+                                    And the material will be eventually added in next vectorization.
+                                    "
+                                    data-swal-success-text="Material recommendation accepted."
+                                    class="btn btn-sm btn-success" 
+                                >
+                                    <i class="bi bi-check-lg"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" data-recommendation-id="{{ recommendation.id }}" data-action="reject">
-                                    <i class="bi bi-x-lg"></i> Reject
+                                <button
+                                    hx-post="/admin/reccommendation/{{recommendation.material_id}}/reject" 
+                                    hx-confirm="Are you sure?"
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    data-bs-title="Reject material recommendation"
+                                    data-swal-text="
+                                    This action will result in the rejection the recommended material. 
+                                    "
+                                    data-swal-success-text="Material recommendation rejected."
+                                    class="btn btn-sm btn-danger" 
+                                >
+                                    <i class="bi bi-x-lg"></i>
                                 </button>
                             </div>
                         </td>
@@ -53,5 +86,27 @@
 
 {% endblock content %}
 
-
+{% block scripts %}
+<script>
+    document.addEventListener("htmx:confirm", function(e) {
+        const swalText = e.detail.target.getAttribute('data-swal-text')?.trim();
+        if (swalText) {
+            e.preventDefault();
+            swal({
+                title: "Are you sure?",
+                text: swalText,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willPerformAction) => {
+                if (willPerformAction) {
+                    e.detail.issueRequest(true);
+                    swal("Action successfully commited", {icon: "success",});
+                }
+            });
+        }
+    });
+</script>
+{% endblock scripts %}
 

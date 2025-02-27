@@ -26,7 +26,16 @@
     {% block body %} {% endblock body %}
     <script src="/static/external/htmx/htmx.min.js"></script>
     <script src="/static/external/htmx/response-targets.min.js"></script>
+    <script src="/static/external/bootstrap/js/popper.min.js"></script>
     <script src="/static/external/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        // activate boostrap tool tips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
     <script src="/static/js/password.js"></script>
 
     {% block scripts %} {% endblock scripts %}

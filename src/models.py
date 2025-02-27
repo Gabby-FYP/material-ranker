@@ -1,7 +1,9 @@
 from datetime import datetime
-from sqlmodel import SQLModel, Field, Column, DateTime, func, Relationship
+from functools import cached_property
+from sqlmodel import SQLModel, Field, Column, DateTime, Session, func, Relationship, col, select
 from pydantic import EmailStr, PositiveInt, FileUrl
 import uuid
+from src.core.db import engine
 from enum import StrEnum
 from sqlalchemy_file import File, FileField, ImageField
 from sqlalchemy_file.validators import ContentTypeValidator, SizeValidator
@@ -132,6 +134,11 @@ class Material(SQLModel, table=True):
     class Config:
         arbitrary_types_allowed = True
     
+    
+    def rating_count(self) -> int:
+        with Session(engine) as session:
+            return 0 # TODO: fix this to be used in jinja
+
     @property
     def normalized_average_rating(self) -> float:
         """Normalize average rating."""

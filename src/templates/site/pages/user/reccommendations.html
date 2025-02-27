@@ -29,7 +29,7 @@
                     <td>{{ recommendation.material_title }}</td>
                     <td>{{ recommendation.recommendation_datetime }}</td>
                     <td>
-                        {% if recommendation.status == 'accepted' %}
+                        {% if recommendation.status == 'approved' %}
                             <span class="text-success">Accepted</span>
                         {% elif recommendation.status == 'pending' %}
                             <span class="text-warning">Pending</span>

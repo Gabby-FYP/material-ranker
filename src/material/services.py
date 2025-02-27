@@ -1,7 +1,7 @@
 from fastapi import Depends, Query, UploadFile, status, File, Form, Path
 from typing import Annotated
 from pydantic import HttpUrl, UUID4
-from sqlmodel import Session, select, col
+from sqlmodel import Session, select, col, func
 from src.core.dependecies import (
     require_admin_or_user_access,
     require_db_session, 
@@ -10,7 +10,7 @@ from src.core.dependecies import (
 )
 from src.libs.exceptions import ServiceError
 from src.libs.utils import CeleryHelper
-from src.material.schemas import MaterailRecommendation
+from src.material.schemas import AdminDashboardDetails, MaterailRecommendation
 from src.material.tfid.vectorizer import Vectorizer, VectorizerNotFound
 from src.models import AdminUser, Material, MaterialRating, MaterialStatus, MaterialVector, User, UserMaterial
 from src.material.tasks import synchronize_documents_tasks
@@ -167,7 +167,7 @@ def material_search_service(
     return search_results
 
 
-def material_list_service(
+def admin_material_list_service(
     session: Annotated[Session, Depends(require_db_session)],
     admin: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
 ) -> list[Material]:
@@ -178,6 +178,7 @@ def material_list_service(
             col(Material.status).in_(
                 [
                     MaterialStatus.vectorized, 
+                    MaterialStatus.removed,
                     MaterialStatus.pending_vectorization,
                 ]
             )
@@ -251,6 +252,7 @@ def user_material_recommendation_list(
     recommendation_status = {
         MaterialStatus.pending_approval: 'pending',
         MaterialStatus.pending_vectorization: 'approved',
+        MaterialStatus.vectorized: 'approved',
         MaterialStatus.rejected: 'rejected',
     }
 
@@ -378,3 +380,105 @@ def rate_material_service(
     )
 
     return material
+
+
+def mark_material_for_removal_service(
+    session: Annotated[Session, Depends(require_db_session)],
+    admin: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
+    material_id: Annotated[UUID4, Path()],
+) -> None:
+    """Get a material."""
+
+    material = session.exec(
+        select(Material).where(
+            Material.id == material_id,
+            col(Material.status).in_(
+                [
+                    MaterialStatus.vectorized,
+                    MaterialStatus.pending_vectorization,
+                ]
+            ),
+        )
+    ).first()
+    
+    if not material:
+        raise ServiceError(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Material not found.",
+        )
+
+    if material.status == MaterialStatus.pending_vectorization:
+        # material has not been vectorized we can delete it directly
+        session.delete(material)
+        session.commit()
+    else:
+        material.status = MaterialStatus.removed
+        session.add(material)
+        session.commit()
+
+
+def get_admin_dashboard_detail_service(
+    session: Annotated[Session, Depends(require_db_session)],
+    admin: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
+) -> AdminDashboardDetails:
+    """Retrieve admin dashboard details."""
+    
+    # count number of users on platform
+    user_count = session.exec(select(func.count(col(User.id)))).first()
+    material_count = session.exec(
+        select(func.count(col(Material.id))).where(
+            Material.status == MaterialStatus.vectorized
+        )
+    ).first()
+    pending_review_count = session.exec(
+        select(func.count(col(Material.id))).where(
+            Material.status == MaterialStatus.pending_approval
+        )        
+    ).first()
+    pending_unvectorization_count = session.exec(
+        select(func.count(col(Material.id))).where(
+            col(Material.status).in_([
+                MaterialStatus.removed,
+                MaterialStatus.pending_vectorization,
+            ])
+        )        
+    ).first()
+
+    return AdminDashboardDetails(
+        user_count=user_count,
+        material_count=material_count,
+        pending_review_count=pending_review_count,
+        pending_unvectorization_count=pending_unvectorization_count,
+    )
+
+
+def material_pending_vectorization_list_service(
+    session: Annotated[Session, Depends(require_db_session)],
+    admin: Annotated[AdminUser, Depends(require_authenticated_admin_user_session)],
+) -> list[Material]:
+    """List all materials on the platform."""
+    
+    return session.exec(
+        select(Material).where(
+            col(Material.status).in_(
+                [
+                    MaterialStatus.removed,
+                    MaterialStatus.pending_vectorization,
+                ]
+            )
+        ).order_by(col(Material.vector_id))
+    ).all()
+
+
+def user_material_list_service(
+    session: Annotated[Session, Depends(require_db_session)],
+    user: Annotated[User, Depends(require_authenticated_user_session)],
+) -> list[Material]:
+    """List all materials on the platform."""
+    
+    return session.exec(
+        select(Material).where(
+            Material.status == MaterialStatus.vectorized
+        )
+    ).all()
+
