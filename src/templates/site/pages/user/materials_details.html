@@ -1,0 +1,74 @@
+<!-- templates/site/pages/user/material_details.html -->
+{% extends "site/pages/user/base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ material.title }}</h5>
+        <p class="card-text"><strong>Description:</strong> {{ material.description }}</p>
+        <p class="card-text"><strong>Author(s):</strong> {{ material.authors }}</p>
+        <p class="card-text"><strong>Status:</strong> {{ material.status }}</p>
+        {% if material.external_download_url %}
+            <p class="card-text">
+                <strong>Download:</strong> 
+                <a href="{{ material.external_download_url }}" target="_blank" class="btn btn-sm btn-primary">Download</a>
+            </p>
+        {% endif %}
+        <p class="card-text"><strong>Created:</strong> {{ material.created_datetime.date() }}</p>
+        {% if material.average_rating %}
+            <p class="card-text"><strong>Average Rating:</strong> {{ material.average_rating }}</p>
+        {% endif %}
+        {% if material.recommender_matric_no %}
+            <p class="card-text"><strong>Recommended By:</strong> {{ material.recommender_matric_no }}</p>
+            <p class="card-text"><strong>Recommended On:</strong> {{ material.recommendation_datetime.date() }}</p>
+        {% endif %}
+
+        <!-- Star Rating Section -->
+        <div class="mt-3">
+            <h6>Rate this Material</h6>
+            <form 
+                hx-post="/materials/{{ material.id }}/rate/" 
+                hx-target="#rating-result" 
+                hx-swap="innerHTML"
+                class="d-flex align-items-center gap-2"
+            >
+                <div class="rating" style="direction: rtl;">
+                    <input type="radio" id="star5" name="rating" value="5" hidden>
+                    <label for="star5" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" id="star4" name="rating" value="4" hidden>
+                    <label for="star4" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" id="star3" name="rating" value="3" hidden>
+                    <label for="star3" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" id="star2" name="rating" value="2" hidden>
+                    <label for="star2" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" id="star1" name="rating" value="1" hidden required>
+                    <label for="star1" class="star"><i class="bi bi-star-fill"></i></label>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+            </form>
+            <div id="rating-result" class="mt-2"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating {
+        display: inline-flex;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label.star {
+        font-size: 1.5rem;
+        color: #ddd;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+    .rating input:checked ~ label.star,
+    .rating label.star:hover,
+    .rating label.star:hover ~ label.star {
+        color: #ffd700; /* Gold color for selected/hovered stars */
+    }
+</style>
+
+{% endblock content %}

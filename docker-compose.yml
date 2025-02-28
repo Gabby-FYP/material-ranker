@@ -61,6 +61,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
+      - ./src:/material_ranker/src
       - ./database:/material_ranker/database
       - ./logs:/material_ranker/logs
     env_file:
