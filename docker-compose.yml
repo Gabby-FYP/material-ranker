@@ -26,7 +26,7 @@ services:
         condition: service_healthy
       material-ranker-prestart:
         condition: service_completed_successfully
-    volumes:
+    volumes: &common_volume
       - ./src:/material_ranker/src
       - ./media:/material_ranker/media
       - ./database:/material_ranker/database
@@ -60,9 +60,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    volumes:
-      - ./database:/material_ranker/database
-      - ./logs:/material_ranker/logs
+    volumes: *common_volume
     env_file:
       - .env
     environment: *common_env
@@ -77,12 +75,7 @@ services:
         condition: service_healthy
       material-ranker:
         condition: service_started
-    volumes:
-      - ./src:/material_ranker/src
-      - ./media:/material_ranker/media
-      - ./database:/material_ranker/database
-      - ./models:/material_ranker/models
-      - ./logs:/material_ranker/logs
+    volumes: *common_volume
     env_file:
       - .env
     environment: *common_env

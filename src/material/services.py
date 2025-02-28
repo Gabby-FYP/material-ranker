@@ -1,6 +1,6 @@
 from fastapi import Depends, Query, UploadFile, status, File, Form, Path
 from typing import Annotated
-from pydantic import HttpUrl, UUID4
+from pydantic import AnyUrl, UUID4
 from sqlmodel import Session, select, col, func
 from src.core.dependecies import (
     require_admin_or_user_access,
@@ -31,7 +31,7 @@ def create_material_service(
     author: Annotated[str, Form()],
     content: Annotated[UploadFile, File()],
     cover_image: Annotated[UploadFile | None, File()] = None,
-    external_download_url: Annotated[HttpUrl | None, Form()] = None,
+    external_download_url: Annotated[AnyUrl | None, Form()] = None,
 ) -> Material:
     """Create a new material."""
 
