@@ -31,7 +31,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    COSINE_SIMILARITY_WEIGHT: float =  0.6
+    COSINE_SIMILARITY_WEIGHT: float =  0.8
 
     BASE_DIR: str = os.path.dirname(os.path.dirname(__file__))
     API_V1_STR: str = "/api/v1"
