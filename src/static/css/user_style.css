@@ -97,3 +97,21 @@ body {background-color: #f8f9fa;}
     background-color: #5a2d9e;
     border-color: #5a2d9e;
 }
+.star-rating {
+    direction: rtl; /* Right-to-left for intuitive hover effect */
+    display: inline-block;
+    font-size: 1.5rem;
+}
+.star-rating input[type="radio"] {
+    display: none; /* Hide radio buttons */
+}
+.star-rating label {
+    color: #ddd; /* Unselected stars */
+    cursor: pointer;
+    margin: 0;
+}
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #f5c518; /* Selected or hovered stars */
+}

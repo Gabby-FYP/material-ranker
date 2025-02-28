@@ -9,6 +9,7 @@ from src.core.config import settings
 # add your model's MetaData object here
 # for 'autogenerate' support
 from src.models import *
+from src.models import MaterialRating
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

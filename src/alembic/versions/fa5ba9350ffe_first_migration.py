@@ -1,8 +1,8 @@
 """First migration
 
-Revision ID: 435bec889a24
+Revision ID: fa5ba9350ffe
 Revises: 
-Create Date: 2025-02-23 13:39:35.353542
+Create Date: 2025-02-28 05:13:32.241218
 
 """
 from alembic import op
@@ -12,7 +12,7 @@ import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision = '435bec889a24'
+revision = 'fa5ba9350ffe'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -69,7 +69,7 @@ def upgrade():
     sa.Column('title', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('authors', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('average_rating', sa.Integer(), nullable=True),
+    sa.Column('average_rating', sa.Float(), nullable=True),
     sa.Column('external_download_url', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('cover_image', sqlalchemy_file.types.ImageField(), nullable=True),
     sa.Column('content', sqlalchemy_file.types.FileField(), nullable=True),

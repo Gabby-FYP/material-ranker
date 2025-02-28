@@ -70,8 +70,8 @@ class MaterialLabels(SQLModel, table=True):
     title: str = Field(index=True, unique=True)
 
 
-class MaterialRating(SQLModel, tabel=True):
-    user_id: uuid.UUID = Field(foreign_key='user.id' ,primary_key=True)
+class MaterialRating(SQLModel, table=True):
+    user_id: uuid.UUID = Field(foreign_key='user.id', primary_key=True)
     material_id: uuid.UUID = Field(foreign_key='material.id', primary_key=True)
     rating: int = Field(ge=1, le=5)
     material: "Material" = Relationship(sa_relationship_kwargs={"lazy": "select"})
@@ -133,16 +133,14 @@ class Material(SQLModel, table=True):
 
     class Config:
         arbitrary_types_allowed = True
-    
-    
-    def rating_count(self) -> int:
-        with Session(engine) as session:
-            return 0 # TODO: fix this to be used in jinja
 
     @property
     def normalized_average_rating(self) -> float:
         """Normalize average rating."""
-        rating = self.average_rating or 1.0
+        rating = (
+            1.0
+            if self.average_rating is None else self.average_rating
+        )
         return (rating - 1) / 4
 
 

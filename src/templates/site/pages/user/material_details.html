@@ -1,0 +1,89 @@
+{% extends "site/pages/user/base.html" %}
+
+{% block content %}
+    <!-- Main Content -->
+
+    <div class="container my-5">
+        <!-- Back to List Link -->
+        <a 
+            href="/materials/" 
+            hx-get="/materials/" 
+            hx-trigger="click" 
+            hx-swap="innerHTML" 
+            hx-target="body"
+            class="btn btn-secondary mb-3">&larr; Back to Materials
+        </a>
+
+        <!-- Material Header -->
+        <h1 class="mb-3">{{material.title}}</h1>
+        <h5 class="text-muted mb-4">{{material.authors}}</h5>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Cover Image Column -->
+            <div class="col-md-4 mb-4">
+                <img src="/media/{{material.cover_image.file_id}}" class="img-fluid rounded" alt="Material Cover">
+            </div>
+            <!-- Details Column -->
+            <div class="col-md-8">
+                <!-- Description -->
+                <h3>Description</h3>
+                <p>{{material.description}}</p>
+
+                <!-- Metadata -->
+                <p><strong>Created:</strong> {{material.created_datetime.strftime('%B %d, %Y')}}</p>
+                <p>
+                    <strong>Average Rating:</strong>
+                    {% if material.average_rating %} 
+                    {{ material.average_rating }}
+                    based on {{ materialRatingCount }} ratings
+                    {% else %}
+                    No ratings yet
+                    {% endif %}
+                </p>
+                
+                {% if material.external_download_url %}
+                    <p>
+                        <strong>Download:</strong>
+                        <a href="{{material.external_download_url}}" target="_blank" class="btn btn-primary btn-sm">
+                            Download Material
+                        </a>
+                    </p>
+                {% endif %}
+                
+                {% if not hasRatedThisMaterial %}
+                    <div class="my-5 row-cols-12 row-cols-md-8 row-cols-lg-8 row-cols-xl-3">
+                        <!-- Rating Form -->
+                        <h3 class="text-center">Rate This Material</h3>
+                        <form
+                            class="d-flex row" 
+                            method="POST"
+                            hx-post="/materials/{{material.id}}/rate/"
+                            action="/materials/{{material.id}}/rate/" 
+                            hx-target-400="#form-error"
+                        >
+                            <div id="form-error" class="text-danger"></div>
+                            <div class="star-rating mb-3 d-flex justify-content-center">
+                                <input type="radio" id="star5" name="rating" value="5">
+                                <label for="star5" title="5 stars">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4" title="4 stars">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3" title="3 stars">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2" title="2 stars">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1" title="1 star">★</label>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit Rating</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %} 
+{% endblock scripts %}

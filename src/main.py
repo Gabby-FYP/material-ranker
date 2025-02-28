@@ -9,6 +9,7 @@ from fastapi.responses import HTMLResponse
 from src.libs.utils import parse_html_form_field_error, parse_html_form_error, parse_html_toast_message
 from src.libs.exceptions import BadRequestError, ServiceError
 from sqlalchemy_file.storage import StorageManager
+from src.media_route  import router as media_router
 
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
@@ -70,5 +71,5 @@ def service_exception_handler(request: Request, exc: ServiceError):
         )
     )
 
-
+app.include_router(media_router, tags=["Media"])
 app.include_router(routes)
