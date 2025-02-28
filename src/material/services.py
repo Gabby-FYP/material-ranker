@@ -204,6 +204,31 @@ def get_material_service(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Material not found.",
         )
+    
+    return material
+
+
+def check_user_has_rated_material(session: Session, user: User, material: Material) -> bool:
+    """Check if user has already rated a material."""
+    return bool(
+        session.exec(
+            select(MaterialRating).where(
+                MaterialRating.user_id == user.id,
+                MaterialRating.material_id == material.id,
+            )
+        ).first()
+    )
+
+
+def material_user_rating_count(
+    session: Session, material: Material
+) -> int:
+    """Return the total number of users who have rated materials."""
+    return session.exec(
+        select(func.count(col(MaterialRating.material_id))).where(
+            MaterialRating.material_id == material.id
+        )
+    ).first() or 0
 
 
 def material_recommendation_list_service(
@@ -338,8 +363,8 @@ def _update_material_rating(
         material.average_rating = average_rating
         session.add(material)
         session.commit()
-        session.refresh()
-    
+        session.refresh(material)
+
     return material
 
 
